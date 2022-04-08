@@ -29,7 +29,7 @@ public class Table {
 			sitOrder = new MemFIFO<> (new Integer [sitsNumber]);
 			eatOrder = new MemFIFO<> (new Integer [sitsNumber]);
 		} catch (Exception e) {
-			GenericIO.writelnString ("Instantiation of waiting FIFO failed: " + e.getMessage ());
+			GenericIO.writelnString ("Instantiation of sit/eat order FIFO failed: " + e.getMessage ());
 			sitOrder = null;
 			eatOrder = null;
 			System.exit(1);
