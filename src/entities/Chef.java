@@ -34,5 +34,26 @@ public class Chef {
 	public void setChefState(int chefState) {
 		this.chefState = chefState;
 	}
+	
+	
+	public void run() {
+		boolean firstCourse = true;
+		/*kit.watchTheNews();
+		kit.sartPreparations();
+		do {
+			if(!firstCourse) { kit.continuePreparation();}
+			else firstCourse=false;
+			
+			kit.proceedToPresentation();
+			bar.alertWaiter();
+			
+			while(!kit.allPortionsDelived()) {
+				kit.haveNextPortionReady();
+				bar.alertWaiter();
+			}
+		}while(!orderBeenCompleted());
+		
+		kit.cleanUp();*/
+	}
 
 }
