@@ -22,7 +22,7 @@ public class Bar {
 		this.repos = repos;
 	}
 	
-	public boolean isHasCalledWaiter() {
+	public boolean getHasCalledWaiter() {
 		return hasCalledWaiter;
 	}
 
@@ -31,7 +31,7 @@ public class Bar {
 	}
 
 
-	public boolean isWantsToPay() {
+	public boolean getWantsToPay() {
 		return wantsToPay;
 	}
 
@@ -41,7 +41,7 @@ public class Bar {
 	}
 
 
-	public boolean isDescribedOrder() {
+	public boolean getDescribedOrder() {
 		return describedOrder;
 	}
 
@@ -51,7 +51,7 @@ public class Bar {
 	}
 
 
-	public boolean isSignalWaiter() {
+	public boolean getSignalWaiter() {
 		return signalWaiter;
 	}
 
@@ -61,7 +61,7 @@ public class Bar {
 	}
 
 
-	public boolean isBillHonored() {
+	public boolean getBillHonored() {
 		return billHonored;
 	}
 
