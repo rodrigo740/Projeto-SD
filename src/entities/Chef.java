@@ -16,7 +16,7 @@ public class Chef extends Thread {
 	public Chef(String name, int chefID, int chefState, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.chefID = chefID;
-		// this.chefState = chefState;
+		this.chefState = ChefStates.WAFOR;
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;
@@ -41,9 +41,11 @@ public class Chef extends Thread {
 	@Override
 	public void run() {
 		boolean firstCourse = true;
+		kit.watchTheNews();
+
 		/*
-		 * kit.watchTheNews(); kit.sartPreparations(); do { if(!firstCourse) {
-		 * kit.continuePreparation();} else firstCourse=false;
+		 * kit.sartPreparations(); do { if(!firstCourse) { kit.continuePreparation();}
+		 * else firstCourse=false;
 		 * 
 		 * kit.proceedToPresentation(); bar.alertWaiter();
 		 * 

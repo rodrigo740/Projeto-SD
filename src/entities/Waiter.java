@@ -16,7 +16,7 @@ public class Waiter extends Thread {
 	public Waiter(String name, int waiterID, int waiterState, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.waiterID = waiterID;
-		// this.waiterState = waiterState;
+		this.waiterState = WaiterStates.APPST;
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;

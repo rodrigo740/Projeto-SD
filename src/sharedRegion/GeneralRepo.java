@@ -2,12 +2,20 @@ package sharedRegion;
 
 import java.util.Objects;
 
+import entities.ChefStates;
+import entities.StudentStates;
+import entities.WaiterStates;
 import genclass.GenericIO;
 import genclass.TextFile;
+import main.SimulPar;
 
 public class GeneralRepo {
 
 	private final String logFileName;
+
+	private int chefState;
+	private int waiterState;
+	private int studentsState[];
 
 	public GeneralRepo(String logFileName) {
 
@@ -17,8 +25,31 @@ public class GeneralRepo {
 			this.logFileName = logFileName;
 		}
 
+		chefState = ChefStates.WAFOR;
+		waiterState = WaiterStates.APPST;
+		studentsState = new int[SimulPar.S];
+
+		for (int i = 0; i < SimulPar.S; i++) {
+			studentsState[i] = StudentStates.GGTRT;
+		}
+
 		reportInitialStatus();
 
+	}
+
+	public synchronized void setChefState(int state) {
+		chefState = state;
+		reportStatus();
+	}
+
+	public synchronized void setWaiterState(int state) {
+		waiterState = state;
+		reportStatus();
+	}
+
+	public synchronized void setStudentState(int id, int state) {
+		studentsState[id] = state;
+		reportStatus();
 	}
 
 	private void reportInitialStatus() {
@@ -50,17 +81,78 @@ public class GeneralRepo {
 			System.exit(1);
 		}
 
-		/*
-		 * 
-		 * for (int i = 0; i < SimulPar.M; i++) switch (barberState[i]) { case
-		 * BarberStates.SLEEPING: lineStatus += " SLEEPING "; break; case
-		 * BarberStates.INACTIVITY: lineStatus += " ACTIVICT "; break; } for (int i = 0;
-		 * i < SimulPar.N; i++) switch (customerState[i]) { case
-		 * CustomerStates.DAYBYDAYLIFE: lineStatus += " DAYBYDAY "; break; case
-		 * CustomerStates.WANTTOCUTHAIR: lineStatus += " WANTCUTH "; break; case
-		 * CustomerStates.WAITTURN: lineStatus += " WAITTURN "; break; case
-		 * CustomerStates.CUTTHEHAIR: lineStatus += " CUTTHAIR "; break; }
-		 */
+		switch (chefState) {
+		case ChefStates.WAFOR:
+			lineStatus += " WAFOR ";
+			break;
+		case ChefStates.PRPCS:
+			lineStatus += " PRPCS ";
+			break;
+		case ChefStates.DSHPT:
+			lineStatus += " DSHPT ";
+			break;
+		case ChefStates.DLVPT:
+			lineStatus += " DLVPT ";
+			break;
+		case ChefStates.CLSSV:
+			lineStatus += " CLSSV ";
+			break;
+		}
+
+		switch (waiterState) {
+		case WaiterStates.APPST:
+			lineStatus += " APPST ";
+			break;
+		case WaiterStates.PRSMN:
+			lineStatus += " PRSMN ";
+			break;
+		case WaiterStates.TKODR:
+			lineStatus += " TKODR ";
+			break;
+		case WaiterStates.PCODR:
+			lineStatus += " PCODR ";
+			break;
+		case WaiterStates.WTFPT:
+			lineStatus += " WTFPT ";
+			break;
+		case WaiterStates.PRCBL:
+			lineStatus += " PRCBL ";
+			break;
+		case WaiterStates.RECPM:
+			lineStatus += " RECPM ";
+			break;
+		}
+
+		for (int i = 0; i < SimulPar.S; i++) {
+
+			switch (studentsState[i]) {
+			case StudentStates.GGTRT:
+				lineStatus += " GGTRT ";
+				break;
+			case StudentStates.TKSTT:
+				lineStatus += " TKSTT ";
+				break;
+			case StudentStates.SELCS:
+				lineStatus += " SELCS ";
+				break;
+			case StudentStates.OGODR:
+				lineStatus += " OGODR ";
+				break;
+			case StudentStates.CHTWC:
+				lineStatus += " CHTWC ";
+				break;
+			case StudentStates.EJYML:
+				lineStatus += " EJYML ";
+				break;
+			case StudentStates.PYTBL:
+				lineStatus += " PYTBL ";
+				break;
+			case StudentStates.GGHOM:
+				lineStatus += " GGHOM ";
+				break;
+			}
+		}
+
 		log.writelnString(lineStatus);
 		if (!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + logFileName + " failed!");

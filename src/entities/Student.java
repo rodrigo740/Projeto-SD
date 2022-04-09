@@ -16,7 +16,7 @@ public class Student extends Thread {
 	public Student(String name, int studentID, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.studentID = studentID;
-		// this.studentState = studentState;
+		this.studentState = StudentStates.GGTRT;
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;
