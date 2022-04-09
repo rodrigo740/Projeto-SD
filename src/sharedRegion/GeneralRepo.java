@@ -28,9 +28,10 @@ public class GeneralRepo {
 			GenericIO.writelnString("The operation of creating the file " + logFileName + " failed!");
 			System.exit(1);
 		}
-		log.writelnString("                The Restaurant Problem");
+		log.writelnString("                The Restaurant - Description of the internal state");
 
-		log.writelnString(" Waiter 1  Chef 1  Student 1  Student 2  Student 3  Student 4  Student 5");
+		log.writelnString(
+				" Chef  Waiter  Stu 0  Stu 1  Stu 2  Stu 3  Stu 4  Stu 5  Stu 6  NCourse  NPortion  \t  \t  \t  Table\nState State   State  State  State  State  State  State  State \t \t             Seat0  Seat1  Seat2  Seat3  Seat4  Seat5  Seat6");
 		if (!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + logFileName + " failed!");
 			System.exit(1);
