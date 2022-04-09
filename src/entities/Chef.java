@@ -4,7 +4,7 @@ import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
 
-public class Chef {
+public class Chef extends Thread{
 	
 	private int chefID;
 	private int chefState;
@@ -13,10 +13,10 @@ public class Chef {
 	private final Kitchen kit;
 	private final Table tbl;
 	
-	public Chef(int chefID, int chefState, Bar bar, Kitchen kit, Table tbl) {
-		super();
+	public Chef(String name, int chefID, int chefState, Bar bar, Kitchen kit, Table tbl) {
+		super(name);
 		this.chefID = chefID;
-		this.chefState = chefState;
+		//this.chefState = chefState;
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;

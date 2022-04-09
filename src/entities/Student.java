@@ -13,9 +13,10 @@ public class Student extends Thread{
 	private final Kitchen kit;
 	private final Table tbl;
 	
-	public Student(int studentID, int studentState, Bar bar, Kitchen kit, Table tbl) {
+	public Student(String name, int studentID, Bar bar, Kitchen kit, Table tbl) {
+		super(name);
 		this.studentID = studentID;
-		this.studentState = studentState;
+		//this.studentState = studentState;
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;	
