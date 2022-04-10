@@ -24,6 +24,16 @@ public class Kitchen {
 	}
 
 	/**
+	 * Set Portion Collected Flag.
+	 *
+	 * @param collected portion collected
+	 */
+
+	public synchronized void setPortionCollected(boolean collected) {
+		portionCollected = collected;
+	}
+
+	/**
 	 * Set Order Arrived Flag.
 	 *
 	 * @param arrived order has arrived
@@ -81,7 +91,7 @@ public class Kitchen {
 		}
 
 		// order has arrived reseting flag
-		orderArrived = false;
+		setOrderArrived(false);
 	}
 
 	/**
@@ -160,7 +170,7 @@ public class Kitchen {
 		}
 
 		// reseting portionCollected flag
-		portionCollected = false;
+		setPortionCollected(false);
 	}
 
 	/**
@@ -177,7 +187,7 @@ public class Kitchen {
 		repos.setChefState(ChefStates.DSHPT);
 
 		// Set portionCollected flag and wake the chef
-		portionCollected = true;
+		setPortionCollected(true);
 		notifyAll();
 	}
 
