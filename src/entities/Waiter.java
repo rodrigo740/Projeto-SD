@@ -13,6 +13,8 @@ public class Waiter extends Thread {
 	private final Kitchen kit;
 	private final Table tbl;
 
+	private boolean actionNeeded;
+
 	public Waiter(String name, int waiterID, int waiterState, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.waiterID = waiterID;
@@ -40,35 +42,67 @@ public class Waiter extends Thread {
 
 	@Override
 	public void run() {
+
+		char oper;
+		boolean end = false, startedPreparation = false;
+
+		oper = bar.lookArround();
+
+		while (!end) {
+
+			switch (oper) {
+			case 'c':
+				tbl.saluteTheClient();
+				bar.returnToTheBar();
+				break;
+			case 'o':
+				bar.getThePad();
+				kit.handTheNoteToTheChef(nCourses, nPortions);
+				bar.returnToTheBar();
+				break;
+			case 'p':
+				while (!tbl.haveAllPortionsBeenServed()) {
+					kit.collectPortion();
+					tbl.deliverPortion();
+				}
+				bar.returnToTheBar();
+				break;
+			case 'b':
+				bar.prepareBill();
+				tbl.presentBill();
+				bar.returnToTheBar();
+				break;
+			case 'g':
+				bar.sayGoodbye();
+				break;
+
+			default:
+				bar.lookArround();
+			}
+
+		}
+
 		/*
-		 * boolean end = false, startedPreparation = false;
+		 * while (!end) { if (tbl.studentHasEntered()) { tbl.saluteTheClient(); while
+		 * (!tbl.hasReadMenu()) { tbl.presentMenu(); } tbl.setHasReadMenu(false);
 		 * 
-		 * while (!end) { if (Table.studentHasEntered()) { // se um deles entrou
-		 * Table.saluteTheClient(); // empregado diz ola while (!Table.hasReadMenu) {
-		 * Table.presentMenu(); } Table.hasReadMenu = false;
+		 * } else if (tbl.studentHasLeft()) { bar.sayGoodbye(); } else if
+		 * (tbl.allHaveLeft()) { end = true;
 		 * 
-		 * } else if (Table.studentHasLeft()) { // se um deles sair Bar.sayGoodbye(); //
-		 * o empregado diz goodbye } else if (Table.allHaveLeft()) { // se eles saíram
-		 * do restaurante end = true;
+		 * } else if (this.hasCalledWaiter) { bar.getThePad(); while
+		 * (!this.hasDescribedTheOrder) { tbl.takeTheOrder(); } this.describedOrder =
+		 * false; while (!Kit.startPreparation()) { Kit.handTheNoteToTheChef(); }
+		 * startedPreparation = true; } else if (this.shouldHaveArrivedEarlier) {
+		 * bar.prepareTheBill(); while (!this.honorTheBill()) { tbl.presentTheBill(); }
+		 * } else if (this.signalWaiter) { startedPreparation = true; } if
+		 * (kit.getStartedPreparation()) {
 		 * 
-		 * } else if (this.hasCalledWaiter) { // estudante chama empregado
-		 * Bar.getThePad(); // empregado vai buscar o bloco para apontar while
-		 * (!this.hasDescribedTheOrder) { // tira o pedido ate o estudante acabar
-		 * Table.takeTheOrder(); // empregado vai buscar o pedido } this.describedOrder
-		 * = false; while (!Kit.startPreparation()) { Kit.handTheNoteToTheChef(); // dar
-		 * a ordem ao chef quanto o chefe // ainda nao comecou a preparar }
-		 * startedPreparation = true; } else if (this.shouldHaveArrivedEarlier) { // o
-		 * estudante diz olha quero pagar Bar.prepareTheBill(); while
-		 * (!this.honorTheBill()) { // o empregado fica aqui ate ele pagar
-		 * Table.presentTheBill(); } } else if (this.signalWaiter) { startedPreparation
-		 * = true; } if (Kit.getStartedPreparation()) { // o chef comecou a preparar
-		 * pratos
+		 * while (!kit.getHaveAllPortionsBeenDelivered()) {
 		 * 
-		 * while (!Kit.getHaveAllPortionsBeenDelivered()) { // enquanto nao tiver
-		 * preparado // todas as porcoes if (Kit.getAlertTheWaiter()) { // o chef diz
-		 * para ir buscar comida Kit.collectPortion(); // coleta a comida
-		 * Table.deliverPortion(); } startedPreparation = false; } } bar.lookAround(); }
+		 * if (kit.getAlertTheWaiter()) { kit.collectPortion(); tbl.deliverPortion(); }
+		 * startedPreparation = false; } } bar.lookAround(); }
 		 */
+
 	}
 
 }

@@ -1,73 +1,111 @@
 package sharedRegion;
 
-import commInfra.MemFIFO;
 import entities.Waiter;
-import genclass.GenericIO;
+import entities.WaiterStates;
 
 public class Bar {
-	
+
 	private final Waiter waiter;
 	private final GeneralRepo repos;
-	
+
+	private char oper;
+
 	private boolean wantsToPay;
 	private boolean describedOrder;
 	private boolean signalWaiter;
 	private boolean billHonored;
 	private boolean hasCalledWaiter;
-	
-	
+
+	private boolean actionNeeded;
+
 	public Bar(GeneralRepo repos) {
-		
+
 		this.waiter = null;
 		this.repos = repos;
 	}
-	
-	public boolean getHasCalledWaiter() {
+
+	public synchronized char lookArround() {
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
+		repos.setWaiterState(WaiterStates.APPST);
+
+		// Sleep while waiting for something to happen
+		while (!actionNeeded) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		}
+
+		// reseting actionNeeded flag
+		setActionNeeded(false);
+
+		return oper;
+
+	}
+
+	public synchronized void setActionNeeded(boolean action) {
+		actionNeeded = action;
+	}
+
+	public synchronized boolean getHasCalledWaiter() {
 		return hasCalledWaiter;
 	}
 
-	public void setHasCalledWaiter(boolean hasCalledWaiter) {
+	public synchronized void setHasCalledWaiter(boolean hasCalledWaiter) {
 		this.hasCalledWaiter = hasCalledWaiter;
 	}
 
-
-	public boolean getWantsToPay() {
+	public synchronized boolean getWantsToPay() {
 		return wantsToPay;
 	}
 
-
-	public void setWantsToPay(boolean wantsToPay) {
+	public synchronized void setWantsToPay(boolean wantsToPay) {
 		this.wantsToPay = wantsToPay;
 	}
 
-
-	public boolean getDescribedOrder() {
+	public synchronized boolean getDescribedOrder() {
 		return describedOrder;
 	}
 
-
-	public void setDescribedOrder(boolean describedOrder) {
+	public synchronized void setDescribedOrder(boolean describedOrder) {
 		this.describedOrder = describedOrder;
 	}
 
-
-	public boolean getSignalWaiter() {
+	public synchronized boolean getSignalWaiter() {
 		return signalWaiter;
 	}
 
-
-	public void setSignalWaiter(boolean signalWaiter) {
+	public synchronized void setSignalWaiter(boolean signalWaiter) {
 		this.signalWaiter = signalWaiter;
 	}
 
-
-	public boolean getBillHonored() {
+	public synchronized boolean getBillHonored() {
 		return billHonored;
 	}
 
-
-	public void setBillHonored(boolean billHonored) {
+	public synchronized void setBillHonored(boolean billHonored) {
 		this.billHonored = billHonored;
 	}
-	
+
+	public synchronized void sayGoodbye() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public synchronized void returnToTheBar() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public synchronized void prepareBill() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public synchronized void getThePad() {
+		// TODO Auto-generated method stub
+
+	}
+
 }
