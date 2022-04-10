@@ -13,8 +13,6 @@ public class Waiter extends Thread {
 	private final Kitchen kit;
 	private final Table tbl;
 
-	private boolean actionNeeded;
-
 	public Waiter(String name, int waiterID, int waiterState, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.waiterID = waiterID;
@@ -46,10 +44,8 @@ public class Waiter extends Thread {
 		char oper;
 		boolean end = false, startedPreparation = false;
 
-		oper = bar.lookArround();
-
 		while (!end) {
-
+			oper = bar.lookArround();
 			switch (oper) {
 			case 'c':
 				tbl.saluteTheClient();
@@ -57,7 +53,8 @@ public class Waiter extends Thread {
 				break;
 			case 'o':
 				bar.getThePad();
-				kit.handTheNoteToTheChef(nCourses, nPortions);
+				tbl.takeTheOrder();
+				kit.handTheNoteToTheChef();
 				bar.returnToTheBar();
 				break;
 			case 'p':

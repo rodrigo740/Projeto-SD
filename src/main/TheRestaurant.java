@@ -51,7 +51,7 @@ public class TheRestaurant {
 
 		repos = new GeneralRepo(fileName);
 
-		table = new Table(repos, SimulPar.S);
+		table = new Table(repos);
 		bar = new Bar(repos);
 		kitchen = new Kitchen(repos);
 

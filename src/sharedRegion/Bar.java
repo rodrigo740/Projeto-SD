@@ -48,6 +48,10 @@ public class Bar {
 		actionNeeded = action;
 	}
 
+	public synchronized void setOper(char op) {
+		oper = op;
+	}
+
 	public synchronized boolean getHasCalledWaiter() {
 		return hasCalledWaiter;
 	}
@@ -94,17 +98,41 @@ public class Bar {
 	}
 
 	public synchronized void returnToTheBar() {
-		// TODO Auto-generated method stub
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
+		repos.setWaiterState(WaiterStates.APPST);
 
 	}
 
 	public synchronized void prepareBill() {
-		// TODO Auto-generated method stub
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRCBL);
+		repos.setWaiterState(WaiterStates.PRCBL);
 
 	}
 
 	public synchronized void getThePad() {
-		// TODO Auto-generated method stub
+
+		// wake up the student
+		notifyAll();
+
+	}
+
+	public synchronized void callTheWaiter() {
+
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('o');
+		notifyAll();
+
+	}
+
+	public synchronized void shouldHaveArrivedEarlier() {
+
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('b');
+		notifyAll();
 
 	}
 

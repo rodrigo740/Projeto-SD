@@ -21,6 +21,18 @@ public class SimulPar {
 	public static final int S = 7;
 
 	/**
+	 * Number of courses
+	 */
+
+	public static final int M = 3;
+
+	/**
+	 * Number of portions
+	 */
+
+	public static final int N = 3;
+
+	/**
 	 * It can't be instantiated
 	 */
 

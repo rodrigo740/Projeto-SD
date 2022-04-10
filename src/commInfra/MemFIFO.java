@@ -1,79 +1,88 @@
 package commInfra;
 
 /**
- *    General description:
- *       definition of a FIFO memory of generic objects built in as a monitor.
- *       It extends a generic memory data type.
+ * Parametric FIFO derived from a parametric memory. Errors are reported.
+ *
+ * @param <R> data type of stored objects
  */
 
-public class MemFIFO<R> extends MemObject<R>
-{
-  /**
-   *  Characterization of the FIFO access discipline
-   */
+public class MemFIFO<R> extends MemObject<R> {
+	/**
+	 * Pointer to the first empty location.
+	 */
 
-   private int inPnt,                                      // insertion pointer
-               outPnt;                                     // retrieval pointer
-   private boolean empty;                                  // signaling empty FIFO
+	private int inPnt;
 
-  /**
-   *  Constructor
-   *
-   *    @param storage storage area
-   */
+	/**
+	 * Pointer to the first occupied location.
+	 */
 
-   public MemFIFO (R [] storage)
-   {
-     super (storage);
-     inPnt = outPnt = 0;
-     empty = true;
-   }
+	private int outPnt;
 
-  /**
-   *  Writing a value in mutual exclusion regime.
-   *
-   *    @param val value to store
-   */
+	/**
+	 * Signaling FIFO empty state.
+	 */
 
-   @Override
-   public synchronized void write (R val)
-   {
-     while ((inPnt == outPnt) && !empty)
-     { try
-       { wait ();                                          // the calling thread must block if FIFO is fully occupied
-       }
-       catch (InterruptedException e) {}
-     }
+	private boolean empty;
 
-     mem[inPnt] = val;
-     inPnt = (inPnt + 1) % mem.length;
-     empty = false;
-     notifyAll ();
-   }
+	/**
+	 * FIFO instantiation. The instantiation only takes place if the memory exists.
+	 * Otherwise, an error is reported.
+	 *
+	 * @param storage memory to be used
+	 * @throws MemException when the memory does not exist
+	 */
 
-  /**
-   *  Reading a value in mutual exclusion regime.
-   *
-   *    @return the retrieved value
-   */
+	public MemFIFO(R[] storage) throws MemException {
+		super(storage);
+		inPnt = outPnt = 0;
+		empty = true;
+	}
 
-   @Override
-   public synchronized R read ()
-   {
-     R val;                                                // retrieved value
+	/**
+	 * FIFO insertion. A parametric object is written into it. If the FIFO is full,
+	 * an error is reported.
+	 *
+	 * @param val parametric object to be written
+	 * @throws MemException when the FIFO is full
+	 */
 
-     while (empty)
-     { try
-       { wait ();                                          // the calling thread must block if FIFO is empty
-       }
-       catch (InterruptedException e) {}
-     }
+	@Override
+	public void write(R val) throws MemException {
+		if ((inPnt != outPnt) || empty) {
+			mem[inPnt] = val;
+			inPnt = (inPnt + 1) % mem.length;
+			empty = false;
+		} else
+			throw new MemException("Fifo full!");
+	}
 
-     val = mem[outPnt];
-     outPnt = (outPnt + 1) % mem.length;
-     empty = (inPnt == outPnt);
-     notifyAll ();
+	/**
+	 * FIFO retrieval. A parametric object is read from it. If the FIFO is empty, an
+	 * error is reported.
+	 *
+	 * @return first parametric object that was written
+	 * @throws MemException when the FIFO is empty
+	 */
 
-     return val;
-   }
+	@Override
+	public R read() throws MemException {
+		R val;
+
+		if (!empty) {
+			val = mem[outPnt];
+			outPnt = (outPnt + 1) % mem.length;
+			empty = (inPnt == outPnt);
+		} else
+			throw new MemException("Fifo empty!");
+		return val;
+	}
+
+	public boolean isFull() {
+		return inPnt == mem.length;
+	}
+
+	public R getLast() {
+		return mem[mem.length - 1];
+	}
 }

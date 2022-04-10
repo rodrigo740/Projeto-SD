@@ -1,5 +1,6 @@
 package entities;
 
+import main.SimulPar;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -40,6 +41,41 @@ public class Student extends Thread {
 
 	@Override
 	public void run() {
+
+		boolean first = false, organizingOrder = true, allHaveChosen = false, lastToEat = false, orderDone = true;
+
+		int m = 1;
+
+		tbl.walk();
+
+		tbl.enterRestaurant();
+
+		tbl.selectingCourse();
+
+		if (tbl.amFirst()) {
+			tbl.informCompanions();
+		} else {
+
+			tbl.organizeOrder();
+			bar.callTheWaiter();
+			tbl.describeOrder();
+		}
+
+		tbl.chat();
+
+		for (int i = 0; i < SimulPar.M; i++) {
+			tbl.enjoyMeal();
+			if (tbl.lastToEat()) {
+				bar.getSignalWaiter();
+			}
+			tbl.chat();
+		}
+		if (tbl.amLast()) {
+			bar.shouldHaveArrivedEarlier();
+			tbl.honorTheBill();
+		}
+
+		tbl.goHome();
 
 	}
 

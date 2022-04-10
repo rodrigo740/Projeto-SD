@@ -4,6 +4,7 @@ import entities.Chef;
 import entities.ChefStates;
 import entities.Waiter;
 import entities.WaiterStates;
+import main.SimulPar;
 
 public class Kitchen {
 
@@ -13,8 +14,6 @@ public class Kitchen {
 	private boolean orderArrived;
 	private boolean portionCollected;
 
-	private int courses;
-	private int portions;
 	private int deliveredCourses;
 	private int deliveredPortions;
 
@@ -52,15 +51,11 @@ public class Kitchen {
 	 * @param nPortions number of portions
 	 */
 
-	public synchronized void handTheNoteToTheChef(int nCourses, int nPortions) {
+	public synchronized void handTheNoteToTheChef() {
 
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PCODR);
 		repos.setWaiterState(WaiterStates.PCODR);
-
-		// set number of courses and portions per course
-		courses = nCourses;
-		portions = nPortions;
 
 		// set orderArrived flag and wake chef
 		setOrderArrived(true);
@@ -120,6 +115,9 @@ public class Kitchen {
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.PRPCS);
 		repos.setChefState(ChefStates.PRPCS);
+
+		// increment delivered courses
+		deliveredCourses++;
 	}
 
 	/**
@@ -145,7 +143,7 @@ public class Kitchen {
 
 	public synchronized boolean allPortionsDelived() {
 
-		return portions == deliveredPortions;
+		return SimulPar.N == deliveredPortions;
 	}
 
 	/**
@@ -168,6 +166,9 @@ public class Kitchen {
 			} catch (Exception e) {
 			}
 		}
+
+		// increment delivered portions
+		deliveredPortions++;
 
 		// reseting portionCollected flag
 		setPortionCollected(false);
@@ -215,7 +216,7 @@ public class Kitchen {
 
 	public synchronized boolean orderBeenCompleted() {
 
-		return courses == deliveredCourses;
+		return SimulPar.M == deliveredCourses;
 
 	}
 
