@@ -42,18 +42,28 @@ public class Chef extends Thread {
 	public void run() {
 		boolean firstCourse = true;
 		kit.watchTheNews();
+		kit.startPreparations();
 
-		/*
-		 * kit.sartPreparations(); do { if(!firstCourse) { kit.continuePreparation();}
-		 * else firstCourse=false;
-		 * 
-		 * kit.proceedToPresentation(); bar.alertWaiter();
-		 * 
-		 * while(!kit.allPortionsDelived()) { kit.haveNextPortionReady();
-		 * bar.alertWaiter(); } }while(!orderBeenCompleted());
-		 * 
-		 * kit.cleanUp();
-		 */
+		do {
+			if (!firstCourse) {
+				kit.continuePreparation();
+			} else {
+				firstCourse = false;
+			}
+
+			kit.proceedToPresentation();
+			// bar.alertWaiter();
+
+			kit.deliverPortion();
+
+			while (!kit.allPortionsDelived()) {
+				kit.haveNextPortionReady();
+				// bar.alertWaiter();
+			}
+		} while (!kit.orderBeenCompleted());
+
+		kit.cleanUp();
+
 	}
 
 }
