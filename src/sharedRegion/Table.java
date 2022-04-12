@@ -13,7 +13,11 @@ public class Table {
 
 	private int first;
 	private int portionsDelivered;
+	private int coursesDelivered;
+	private int nStudents;
+	private int eat;
 
+	private boolean billPresented;
 	private boolean organizingOrder;
 	private boolean allHaveChosen;
 	private boolean orderDescribed;
@@ -22,6 +26,7 @@ public class Table {
 	private boolean gotThePad;
 	private boolean portionDelivered;
 	private boolean allFinishedEating;
+	private boolean informed;
 
 	private MemFIFO<Integer> sitOrder;
 	private MemFIFO<Integer> eatOrder;
@@ -49,11 +54,6 @@ public class Table {
 		this.repos = repos;
 	}
 
-	public synchronized boolean studentHasEntered() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public synchronized void saluteTheClient() {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRSMN);
@@ -79,7 +79,10 @@ public class Table {
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.RECPM);
 		repos.setWaiterState(WaiterStates.RECPM);
 
-		// Sleep while waiting for the student to describe the order
+		billPresented = true;
+		notifyAll();
+		GenericIO.writelnString("Waiting for student to pay the bill");
+		// Sleep while waiting for the student to honor the bill
 		while (!billHonored) {
 			try {
 				wait();
@@ -96,7 +99,7 @@ public class Table {
 		return portionsDelivered == SimulPar.N;
 	}
 
-	public synchronized void takeTheOrder() {
+	public synchronized void getThePad() {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.TKODR);
 		repos.setWaiterState(WaiterStates.TKODR);
@@ -114,7 +117,7 @@ public class Table {
 		}
 
 		// reset orderDescribed flag
-		setGotThePad(false);
+		setOrderDescribed(false);
 	}
 
 	private synchronized void setPortionDelivered(boolean b) {
@@ -147,6 +150,11 @@ public class Table {
 
 	}
 
+	public synchronized void setInformed(boolean b) {
+		informed = b;
+
+	}
+
 	public synchronized void walk() {
 		int studentID;
 		// set state of student
@@ -154,17 +162,16 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGTRT);
 		repos.setStudentState(studentID, StudentStates.GGTRT);
 
-		if (first == -1) {
-			first = studentID;
-		}
-
 		try {
-			Thread.sleep((long) (1 + 40 * Math.random()));
+			long v = (long) (1 + 40 * Math.random());
+			GenericIO.writelnString("Student " + studentID + " has to wait " + v);
+			Thread.sleep(v);
 		} catch (InterruptedException e) {
 		}
+
 	}
 
-	public synchronized void enterRestaurant() {
+	public synchronized void takeASeat() {
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
@@ -180,7 +187,13 @@ public class Table {
 			e1.printStackTrace();
 		}
 
-		// Sleep while waiting for the student to describe the order
+		if (first == -1) {
+			first = studentID;
+		}
+
+		((Student) Thread.currentThread()).setSeat(nStudents);
+		nStudents++;
+		// Sleep while waiting for the waiter to salute the student
 		while (!clientSaluted) {
 			try {
 				wait();
@@ -189,7 +202,8 @@ public class Table {
 		}
 
 		// reset orderDescribed flag
-		setClientSaluted(false);
+		clientSaluted = false;
+
 	}
 
 	public synchronized void selectingCourse() {
@@ -210,11 +224,8 @@ public class Table {
 	}
 
 	public synchronized void informCompanions() {
-		int studentID;
-		// set state of student
-		studentID = ((Student) Thread.currentThread()).getStudentID();
-		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
-		repos.setStudentState(studentID, StudentStates.CHTWC);
+
+		setInformed(true);
 
 		// waking up the student that takes the order
 		notifyAll();
@@ -229,7 +240,23 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.OGODR);
 		repos.setStudentState(studentID, StudentStates.OGODR);
 
-		// Sleep while waiting for the student to describe the order
+		// for each student wait
+		for (int i = 0; i < SimulPar.S - 1; i++) {
+			// Sleep while waiting for all of the students to describes their orders
+			while (!informed) {
+				try {
+					wait();
+				} catch (Exception e) {
+				}
+			}
+			setInformed(false);
+		}
+
+	}
+
+	public synchronized void describeOrder() {
+
+		// Sleep while waiting for the waiter to get the pad
 		while (!gotThePad) {
 			try {
 				wait();
@@ -237,23 +264,17 @@ public class Table {
 			}
 		}
 
-		// reset orderDescribed flag and waking up the waiter
-		setGotThePad(false);
-		notifyAll();
-
+		int studentID;
 		// set state of student
+		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
 
-	}
-
-	public synchronized void describeOrder() {
-		// setting orderDescribed flag and wake up the waiter
+		// reset gotThePad flag and set orderDescribed flag and waking up the waiter
+		setGotThePad(false);
 		setOrderDescribed(true);
 		notifyAll();
 
-		// reset orderDescribed flag
-		setOrderDescribed(false);
 	}
 
 	public synchronized void chat() {
@@ -273,9 +294,8 @@ public class Table {
 			}
 		}
 
-		// reset orderDescribed flag and waking up the waiter
+		// reset orderDescribed flag
 		setPortionDelivered(false);
-		setAllFinishedEating(false);
 
 	}
 
@@ -292,22 +312,17 @@ public class Table {
 		} catch (InterruptedException e) {
 		}
 
-		try {
-			eatOrder.write(studentID);
-		} catch (MemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 	public synchronized boolean lastToEat() {
-		if (eatOrder.isFull()) {
-			try {
-				eatOrder = new MemFIFO<>(new Integer[SimulPar.S]);
-			} catch (MemException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		eat++;
+		if (eat == SimulPar.S) {
+			coursesDelivered++;
+			eat = 0;
+			portionsDelivered = 0;
+			if (coursesDelivered == SimulPar.M) {
+				setAllFinishedEating(true);
+				notifyAll();
 			}
 			return true;
 		}
@@ -329,6 +344,13 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.PYTBL);
 		repos.setStudentState(studentID, StudentStates.PYTBL);
 
+		while (!billPresented) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		}
+		billPresented = false;
 		// set orderDescribed flag and wake up waiter
 		setBillHonored(true);
 		notifyAll();

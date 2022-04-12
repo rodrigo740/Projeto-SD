@@ -13,6 +13,7 @@ public class Kitchen {
 
 	private boolean orderArrived;
 	private boolean portionCollected;
+	private boolean portionReady;
 
 	private int deliveredCourses;
 	private int deliveredPortions;
@@ -30,6 +31,16 @@ public class Kitchen {
 
 	public synchronized void setPortionCollected(boolean collected) {
 		portionCollected = collected;
+	}
+
+	/**
+	 * Set Portion Ready Flag.
+	 *
+	 * @param collected portion ready
+	 */
+
+	public synchronized void setPortionReady(boolean ready) {
+		portionReady = ready;
 	}
 
 	/**
@@ -116,8 +127,8 @@ public class Kitchen {
 		((Chef) Thread.currentThread()).setChefState(ChefStates.PRPCS);
 		repos.setChefState(ChefStates.PRPCS);
 
-		// increment delivered courses
-		deliveredCourses++;
+		// reset delivered portions
+		deliveredPortions = 0;
 	}
 
 	/**
@@ -132,6 +143,10 @@ public class Kitchen {
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.DSHPT);
 		repos.setChefState(ChefStates.DSHPT);
+
+		// set portionReady flag
+		setPortionReady(true);
+
 	}
 
 	/**
@@ -183,9 +198,17 @@ public class Kitchen {
 
 	public synchronized void collectPortion() {
 
-		// set state of chef
-		((Chef) Thread.currentThread()).setChefState(ChefStates.DSHPT);
-		repos.setChefState(ChefStates.DSHPT);
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.WTFPT);
+		repos.setWaiterState(WaiterStates.WTFPT);
+
+		// Sleep while waiting for a portion to be ready to be ready
+		while (!portionReady) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		}
 
 		// Set portionCollected flag and wake the chef
 		setPortionCollected(true);
@@ -215,7 +238,8 @@ public class Kitchen {
 	 */
 
 	public synchronized boolean orderBeenCompleted() {
-
+		// increment delivered courses
+		deliveredCourses++;
 		return SimulPar.M == deliveredCourses;
 
 	}
@@ -233,6 +257,11 @@ public class Kitchen {
 		((Chef) Thread.currentThread()).setChefState(ChefStates.CLSSV);
 		repos.setChefState(ChefStates.CLSSV);
 
+	}
+
+	public synchronized void alertWaiter() {
+		setPortionReady(true);
+		notifyAll();
 	}
 
 }

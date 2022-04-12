@@ -1,5 +1,6 @@
 package entities;
 
+import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -42,7 +43,7 @@ public class Waiter extends Thread {
 	public void run() {
 
 		char oper;
-		boolean end = false, startedPreparation = false;
+		boolean end = false;
 
 		while (!end) {
 			oper = bar.lookArround();
@@ -52,16 +53,18 @@ public class Waiter extends Thread {
 				bar.returnToTheBar();
 				break;
 			case 'o':
-				bar.getThePad();
-				tbl.takeTheOrder();
+				tbl.getThePad();
 				kit.handTheNoteToTheChef();
 				bar.returnToTheBar();
 				break;
 			case 'p':
+
+				GenericIO.writelnString("Chef has called me");
 				while (!tbl.haveAllPortionsBeenServed()) {
 					kit.collectPortion();
 					tbl.deliverPortion();
 				}
+				GenericIO.writelnString("All portions served, returning to the bar");
 				bar.returnToTheBar();
 				break;
 			case 'b':
@@ -71,34 +74,16 @@ public class Waiter extends Thread {
 				break;
 			case 'g':
 				bar.sayGoodbye();
+				bar.returnToTheBar();
 				break;
-
-			default:
-				bar.lookArround();
+			case 'e':
+				end = true;
+				break;
 			}
 
 		}
 
-		/*
-		 * while (!end) { if (tbl.studentHasEntered()) { tbl.saluteTheClient(); while
-		 * (!tbl.hasReadMenu()) { tbl.presentMenu(); } tbl.setHasReadMenu(false);
-		 * 
-		 * } else if (tbl.studentHasLeft()) { bar.sayGoodbye(); } else if
-		 * (tbl.allHaveLeft()) { end = true;
-		 * 
-		 * } else if (this.hasCalledWaiter) { bar.getThePad(); while
-		 * (!this.hasDescribedTheOrder) { tbl.takeTheOrder(); } this.describedOrder =
-		 * false; while (!Kit.startPreparation()) { Kit.handTheNoteToTheChef(); }
-		 * startedPreparation = true; } else if (this.shouldHaveArrivedEarlier) {
-		 * bar.prepareTheBill(); while (!this.honorTheBill()) { tbl.presentTheBill(); }
-		 * } else if (this.signalWaiter) { startedPreparation = true; } if
-		 * (kit.getStartedPreparation()) {
-		 * 
-		 * while (!kit.getHaveAllPortionsBeenDelivered()) {
-		 * 
-		 * if (kit.getAlertTheWaiter()) { kit.collectPortion(); tbl.deliverPortion(); }
-		 * startedPreparation = false; } } bar.lookAround(); }
-		 */
+		GenericIO.writelnString("Waiter end");
 
 	}
 

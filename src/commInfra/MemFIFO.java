@@ -79,7 +79,7 @@ public class MemFIFO<R> extends MemObject<R> {
 	}
 
 	public boolean isFull() {
-		return inPnt == mem.length;
+		return inPnt == 0;
 	}
 
 	public R getLast() {

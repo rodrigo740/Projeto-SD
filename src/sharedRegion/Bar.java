@@ -1,7 +1,11 @@
 package sharedRegion;
 
+import entities.Student;
+import entities.StudentStates;
 import entities.Waiter;
 import entities.WaiterStates;
+import genclass.GenericIO;
+import main.SimulPar;
 
 public class Bar {
 
@@ -18,6 +22,8 @@ public class Bar {
 
 	private boolean actionNeeded;
 
+	private int nLeft;
+
 	public Bar(GeneralRepo repos) {
 
 		this.waiter = null;
@@ -25,9 +31,11 @@ public class Bar {
 	}
 
 	public synchronized char lookArround() {
-		// set state of waiter
-		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
-		repos.setWaiterState(WaiterStates.APPST);
+
+		if (nLeft == SimulPar.S) {
+			setOper('e');
+			return oper;
+		}
 
 		// Sleep while waiting for something to happen
 		while (!actionNeeded) {
@@ -39,7 +47,7 @@ public class Bar {
 
 		// reseting actionNeeded flag
 		setActionNeeded(false);
-
+		GenericIO.writelnString("Waiter action needed: " + oper);
 		return oper;
 
 	}
@@ -93,8 +101,8 @@ public class Bar {
 	}
 
 	public synchronized void sayGoodbye() {
-		// TODO Auto-generated method stub
-
+		nLeft++;
+		GenericIO.writelnString("Goodbye nº: " + nLeft);
 	}
 
 	public synchronized void returnToTheBar() {
@@ -132,6 +140,43 @@ public class Bar {
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('b');
+		notifyAll();
+
+	}
+
+	public synchronized void enter() {
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('c');
+		notifyAll();
+	}
+
+	public synchronized void alertWaiter() {
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('p');
+		notifyAll();
+
+	}
+
+	public synchronized void signalWaiter() {
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('p');
+		notifyAll();
+
+	}
+
+	public synchronized void goHome() {
+		int studentID;
+		// set state of student
+		studentID = ((Student) Thread.currentThread()).getStudentID();
+		((Student) Thread.currentThread()).setStudentState(StudentStates.GGHOM);
+		repos.setStudentState(studentID, StudentStates.GGHOM);
+
+		// set action flag and oper and finally wake up the waiter
+		setActionNeeded(true);
+		setOper('g');
 		notifyAll();
 
 	}

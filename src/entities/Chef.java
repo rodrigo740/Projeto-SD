@@ -52,13 +52,13 @@ public class Chef extends Thread {
 			}
 
 			kit.proceedToPresentation();
-			// bar.alertWaiter();
-
+			bar.alertWaiter();
+			kit.alertWaiter();
 			kit.deliverPortion();
 
 			while (!kit.allPortionsDelived()) {
 				kit.haveNextPortionReady();
-				// bar.alertWaiter();
+				kit.alertWaiter();
 				kit.deliverPortion();
 			}
 		} while (!kit.orderBeenCompleted());
