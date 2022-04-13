@@ -18,7 +18,7 @@ public class SimulPar {
 	 * Number of Students
 	 */
 
-	public static final int S = 4;
+	public static final int S = 3;
 
 	/**
 	 * Number of courses
@@ -30,7 +30,7 @@ public class SimulPar {
 	 * Number of portions
 	 */
 
-	public static final int N = 3;
+	public static final int N = S;
 
 	/**
 	 * It can't be instantiated
