@@ -83,6 +83,7 @@ public class Student extends Thread {
 			}
 			GenericIO.writelnString("Student " + studentID + " has stopped chatting");
 		}
+
 		tbl.chat();
 		if (tbl.amLast()) {
 			GenericIO.writelnString("Student " + studentID + " must honor the bill");
@@ -90,7 +91,6 @@ public class Student extends Thread {
 			tbl.honorTheBill();
 			GenericIO.writelnString("Student " + studentID + " has honored the bill");
 		}
-
 		bar.goHome();
 
 	}

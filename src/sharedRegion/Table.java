@@ -323,6 +323,7 @@ public class Table {
 			if (coursesDelivered == SimulPar.M) {
 				setAllFinishedEating(true);
 				notifyAll();
+				return false;
 			}
 			return true;
 		}

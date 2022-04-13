@@ -70,6 +70,7 @@ public class Waiter extends Thread {
 			case 'b':
 				bar.prepareBill();
 				tbl.presentBill();
+				bar.receivedPayment();
 				bar.returnToTheBar();
 				break;
 			case 'g':
