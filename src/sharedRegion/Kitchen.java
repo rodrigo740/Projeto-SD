@@ -174,6 +174,9 @@ public class Kitchen {
 		((Chef) Thread.currentThread()).setChefState(ChefStates.DLVPT);
 		repos.setChefState(ChefStates.DLVPT);
 
+		setPortionReady(true);
+		notifyAll();
+
 		// Sleep while waiting for order to arrive
 		while (!portionCollected) {
 			try {
@@ -209,6 +212,8 @@ public class Kitchen {
 			} catch (Exception e) {
 			}
 		}
+
+		setPortionReady(false);
 
 		// Set portionCollected flag and wake the chef
 		setPortionCollected(true);
