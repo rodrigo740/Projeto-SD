@@ -24,6 +24,7 @@ public class Student extends Thread {
 		this.bar = bar;
 		this.kit = kit;
 		this.tbl = tbl;
+		this.seat = -1;
 	}
 
 	public int getStudentID() {
