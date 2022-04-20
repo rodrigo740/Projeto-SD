@@ -49,10 +49,9 @@ public class Waiter extends Thread {
 			oper = bar.lookArround();
 			switch (oper) {
 			case 'c':
-				GenericIO.writelnString("Going to salute a client");
 				tbl.saluteTheClient();
-				GenericIO.writelnString("Saluted a client");
-				bar.returnToTheBar();
+				GenericIO.writelnString("Waiter saluted a client");
+				bar.returnToTheBarAfterSalute();
 				break;
 			case 'o':
 				tbl.getThePad();
@@ -61,12 +60,12 @@ public class Waiter extends Thread {
 				break;
 			case 'p':
 
-				GenericIO.writelnString("Chef has called me");
+				// GenericIO.writelnString("Chef has called me");
 				while (!tbl.haveAllPortionsBeenServed()) {
 					kit.collectPortion();
 					tbl.deliverPortion();
 				}
-				GenericIO.writelnString("All portions served, returning to the bar");
+				// GenericIO.writelnString("All portions served, returning to the bar");
 				bar.returnToTheBar();
 				break;
 			case 'b':

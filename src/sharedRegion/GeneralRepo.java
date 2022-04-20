@@ -30,7 +30,7 @@ public class GeneralRepo {
 		chefState = ChefStates.WAFOR;
 		waiterState = WaiterStates.APPST;
 		studentsState = new int[SimulPar.S];
-		seat = new int [SimulPar.S];
+		seat = new int[SimulPar.S];
 		for (int i = 0; i < SimulPar.S; i++) {
 			studentsState[i] = StudentStates.GGTRT;
 			seat[i] = -1;
@@ -52,11 +52,11 @@ public class GeneralRepo {
 
 	public synchronized void setStudentState(int id, int state) {
 		studentsState[id] = state;
-		if(((Student) Thread.currentThread()).getSeat() != -1) {
-			seat[((Student) Thread.currentThread()).getSeat()] = ((Student) Thread.currentThread()).getStudentID();	
-			reportStatus();
+		if (((Student) Thread.currentThread()).getSeat() != -1) {
+			seat[((Student) Thread.currentThread()).getSeat()] = ((Student) Thread.currentThread()).getStudentID();
 		}
-		
+		reportStatus();
+
 	}
 
 	private void reportInitialStatus() {
@@ -66,10 +66,28 @@ public class GeneralRepo {
 			GenericIO.writelnString("The operation of creating the file " + logFileName + " failed!");
 			System.exit(1);
 		}
+
 		log.writelnString("                The Restaurant - Description of the internal state");
-		String s = " Chef  Waiter  Stu 0  Stu 1  Stu 2  Stu 3  Stu 4  Stu 5  Stu 6  NCourse  NPortion  \t  \t  \t \t Table\nState State   State  State  State  State  State  State  State \t" + SimulPar.M  +"\t \t \t" +SimulPar.N  +"\t  Seat0  Seat1  Seat2  Seat3  Seat4  Seat5  Seat6";
+		String s = " Chef  Waiter  Stu 0  Stu 1  Stu 2  Stu 3  Stu 4  Stu 5  Stu 6  NCourse  NPortion  \t  \t  \t \t Table\nState State   State  State  State  State  State  State  State \t"
+				+ SimulPar.M + "\t \t \t" + SimulPar.N + "\t  Seat0  Seat1  Seat2  Seat3  Seat4  Seat5  Seat6";
 		log.writelnString(s);
-		
+
+		/*
+		 * log.
+		 * writelnString("                The Restaurant - Description of the internal state"
+		 * ); String s = " Chef  Waiter ";
+		 * 
+		 * for (int i = 0; i < SimulPar.S; i++) { s += " stu" + i + " "; } s +=
+		 * "NCourse  NPortion  \t  \t  \t \t Table\n";
+		 * 
+		 * for (int i = 0; i < SimulPar.S + SimulPar.C + SimulPar.W; i++) { s +=
+		 * "  State "; }
+		 * 
+		 * s += "\t" + SimulPar.M + "  " + SimulPar.N + "\t";
+		 * 
+		 * for (int i = 0; i < SimulPar.S; i++) { s += " Seat" + i + " "; }
+		 * log.writelnString(s);
+		 */
 		if (!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + logFileName + " failed!");
 			System.exit(1);
@@ -78,7 +96,7 @@ public class GeneralRepo {
 
 	}
 
-	private synchronized void reportStatus() {
+	private void reportStatus() {
 		TextFile log = new TextFile(); // instantiation of a text file handler
 
 		String lineStatus = ""; // state line to be printed
@@ -158,26 +176,27 @@ public class GeneralRepo {
 				lineStatus += " GGHOM ";
 				break;
 			}
-			
+
 		}
-		
-		for( int i =0;i<SimulPar.S;i++) {
-			if(seat[i]==-1) {
-				lineStatus+=" \t ";
-			}else {
-				lineStatus+= " " +  seat[i] + " ";
+
+		for (int i = 0; i < SimulPar.S; i++) {
+			if (seat[i] == -1) {
+				lineStatus += " \t ";
+			} else {
+				lineStatus += " " + seat[i] + " ";
 			}
-			
-			
+
 		}
-		
-		//lineStatus += SimulPar.M + "	" + SimulPar.N;
-		
-		/*for (int i = 0; i < SimulPar.S; i++) {
 
-			lineStatus += " " + studentsState[i];
+		// lineStatus += SimulPar.M + " " + SimulPar.N;
 
-		}*/
+		/*
+		 * for (int i = 0; i < SimulPar.S; i++) {
+		 * 
+		 * lineStatus += " " + studentsState[i];
+		 * 
+		 * }
+		 */
 
 		log.writelnString(lineStatus);
 		if (!log.close()) {

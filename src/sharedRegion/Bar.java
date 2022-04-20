@@ -25,6 +25,8 @@ public class Bar {
 	private boolean actionNeeded;
 
 	private int nLeft;
+	private int nEntered;
+	private int nSaluted;
 
 	private MemFIFO<Integer> enterOrder;
 
@@ -51,6 +53,11 @@ public class Bar {
 
 		if (paymentReceived) {
 			notifyAll();
+		}
+
+		if (nSaluted != nEntered) {
+			setOper('c');
+			return oper;
 		}
 
 		// Sleep while waiting for something to happen
@@ -122,6 +129,21 @@ public class Bar {
 	}
 
 	public synchronized void returnToTheBar() {
+
+		if (oper == 'c') {
+			nSaluted++;
+		}
+
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
+		repos.setWaiterState(WaiterStates.APPST);
+
+	}
+
+	public synchronized void returnToTheBarAfterSalute() {
+
+		nSaluted++;
+
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
@@ -161,6 +183,7 @@ public class Bar {
 	}
 
 	public synchronized void enter() {
+		nEntered++;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('c');

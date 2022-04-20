@@ -57,23 +57,25 @@ public class Student extends Thread {
 		tbl.walk();
 
 		bar.enter();
-		GenericIO.writelnString("Student " + studentID + " has entered the restaurant");
+		// GenericIO.writelnString("Student " + studentID + " has entered the
+		// restaurant");
 
 		tbl.takeASeat();
-		GenericIO.writelnString("Student " + studentID + " has took a seat");
+		// GenericIO.writelnString("Student " + studentID + " has took a seat");
 
 		tbl.selectingCourse();
-		GenericIO.writelnString("Student " + studentID + " has selected a course");
+		// GenericIO.writelnString("Student " + studentID + " has selected a course");
 
 		if (!tbl.amFirst()) {
 			tbl.informCompanions();
 			GenericIO.writelnString("Student " + studentID + " has informed the companion");
 		} else {
-
+			GenericIO.writelnString("Student " + studentID + " has described the order");
 			tbl.organizeOrder();
+			GenericIO.writelnString("Student " + studentID + " is going to call the waiter");
 			bar.callTheWaiter();
 			tbl.describeOrder();
-			GenericIO.writelnString("Student " + studentID + " has described the order");
+
 		}
 		for (int i = 0; i < SimulPar.M; i++) {
 			tbl.chat();

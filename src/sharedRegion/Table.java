@@ -63,7 +63,7 @@ public class Table {
 		// setting clientSaluted flag and waking up the student
 		setClientSaluted(true);
 		notifyAll();
-		GenericIO.writelnString("Waiting for the student to read the menu");
+
 		// Sleep while waiting for the student to read the menu
 		while (!menuRead) {
 			try {
@@ -177,9 +177,11 @@ public class Table {
 			long v = (long) (1 + 40 * Math.random());
 			Thread.sleep(v);
 
-			GenericIO.writelnString("Student " + studentID + " had to wait " + v);
-
 		} catch (InterruptedException e) {
+		}
+
+		if (first == -1) {
+			first = studentID;
 		}
 
 	}
@@ -233,7 +235,7 @@ public class Table {
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 
-		return studentID == sitOrder.peek();
+		return studentID == first;
 
 	}
 
