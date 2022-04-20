@@ -1,5 +1,6 @@
 package sharedRegion;
 
+import commInfra.MemFIFO;
 import entities.Student;
 import entities.StudentStates;
 import entities.Waiter;
@@ -25,7 +26,17 @@ public class Bar {
 
 	private int nLeft;
 
+	private MemFIFO<Integer> enterOrder;
+
 	public Bar(GeneralRepo repos) {
+
+		try {
+			enterOrder = new MemFIFO<>(new Integer[SimulPar.S]);
+		} catch (Exception e) {
+			GenericIO.writelnString("Instantiation of enter order FIFO failed: " + e.getMessage());
+			enterOrder = null;
+			System.exit(1);
+		}
 
 		this.waiter = null;
 		this.repos = repos;

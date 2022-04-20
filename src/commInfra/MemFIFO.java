@@ -78,6 +78,14 @@ public class MemFIFO<R> extends MemObject<R> {
 		return val;
 	}
 
+	public R peek() {
+		R val;
+
+		val = mem[0];
+
+		return val;
+	}
+
 	public boolean isFull() {
 		return inPnt == 0;
 	}

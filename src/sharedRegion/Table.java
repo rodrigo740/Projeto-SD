@@ -17,6 +17,7 @@ public class Table {
 	private int nStudents;
 	private int eat;
 
+	private boolean menuRead;
 	private boolean billPresented;
 	private boolean organizingOrder;
 	private boolean allHaveChosen;
@@ -59,11 +60,21 @@ public class Table {
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRSMN);
 		repos.setWaiterState(WaiterStates.PRSMN);
 
-		// setting clientSaluted flag
+		// setting clientSaluted flag and waking up the student
 		setClientSaluted(true);
-
-		// waking up the student
 		notifyAll();
+		GenericIO.writelnString("Waiting for the student to read the menu");
+		// Sleep while waiting for the student to read the menu
+		while (!menuRead) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		}
+
+		// reset menuRead flag
+		menuRead = false;
+
 	}
 
 	public synchronized void deliverPortion() {
@@ -164,8 +175,10 @@ public class Table {
 
 		try {
 			long v = (long) (1 + 40 * Math.random());
-			GenericIO.writelnString("Student " + studentID + " has to wait " + v);
 			Thread.sleep(v);
+
+			GenericIO.writelnString("Student " + studentID + " had to wait " + v);
+
 		} catch (InterruptedException e) {
 		}
 
@@ -183,16 +196,12 @@ public class Table {
 		try {
 			sitOrder.write(studentID);
 		} catch (MemException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-
-		if (first == -1) {
-			first = studentID;
 		}
 
 		((Student) Thread.currentThread()).setSeat(nStudents);
 		nStudents++;
+		GenericIO.writelnString("Student " + studentID + " is waiting for the waiter to salute him");
 		// Sleep while waiting for the waiter to salute the student
 		while (!clientSaluted) {
 			try {
@@ -201,8 +210,8 @@ public class Table {
 			}
 		}
 
-		// reset orderDescribed flag
-		clientSaluted = false;
+		// reset clientSaluted flag
+		setClientSaluted(false);
 
 	}
 
@@ -213,13 +222,18 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.SELCS);
 		repos.setStudentState(studentID, StudentStates.SELCS);
 
+		// set menuRead flag and waking up the waiter
+		menuRead = true;
+		notifyAll();
+
 	}
 
 	public synchronized boolean amFirst() {
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
-		return studentID == first;
+
+		return studentID == sitOrder.peek();
 
 	}
 

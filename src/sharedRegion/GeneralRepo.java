@@ -71,7 +71,7 @@ public class GeneralRepo {
 
 	}
 
-	private void reportStatus() {
+	private synchronized void reportStatus() {
 		TextFile log = new TextFile(); // instantiation of a text file handler
 
 		String lineStatus = ""; // state line to be printed

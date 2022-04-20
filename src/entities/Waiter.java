@@ -49,7 +49,9 @@ public class Waiter extends Thread {
 			oper = bar.lookArround();
 			switch (oper) {
 			case 'c':
+				GenericIO.writelnString("Going to salute a client");
 				tbl.saluteTheClient();
+				GenericIO.writelnString("Saluted a client");
 				bar.returnToTheBar();
 				break;
 			case 'o':

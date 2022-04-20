@@ -60,8 +60,10 @@ public class Student extends Thread {
 
 		tbl.takeASeat();
 		GenericIO.writelnString("Student " + studentID + " has took a seat");
+
 		tbl.selectingCourse();
 		GenericIO.writelnString("Student " + studentID + " has selected a course");
+
 		if (!tbl.amFirst()) {
 			tbl.informCompanions();
 			GenericIO.writelnString("Student " + studentID + " has informed the companion");
