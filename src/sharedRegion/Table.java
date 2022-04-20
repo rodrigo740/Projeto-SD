@@ -29,6 +29,8 @@ public class Table {
 	private boolean allFinishedEating;
 	private boolean informed;
 
+	private boolean hasEaten[];
+
 	private MemFIFO<Integer> sitOrder;
 	private MemFIFO<Integer> eatOrder;
 
@@ -38,6 +40,7 @@ public class Table {
 	public Table(GeneralRepo repos) {
 		first = -1;
 		students = new Student[SimulPar.S];
+		hasEaten = new boolean[SimulPar.S];
 		for (int i = 0; i < students.length; i++) {
 			students[i] = null;
 		}
@@ -203,7 +206,8 @@ public class Table {
 
 		((Student) Thread.currentThread()).setSeat(nStudents);
 		nStudents++;
-		GenericIO.writelnString("Student " + studentID + " is waiting for the waiter to salute him");
+		// GenericIO.writelnString("Student " + studentID + " is waiting for the waiter
+		// to salute him");
 		// Sleep while waiting for the waiter to salute the student
 		while (!clientSaluted) {
 			try {
@@ -303,10 +307,20 @@ public class Table {
 
 		// Sleep while waiting for a portion to be served or everybody has finished
 		// eating
-		while (!portionDelivered && !allFinishedEating) {
-			try {
-				wait();
-			} catch (Exception e) {
+
+		if (!hasEaten[studentID]) {
+			while (!portionDelivered && !allFinishedEating) {
+				try {
+					wait();
+				} catch (Exception e) {
+				}
+			}
+		} else {
+			while (!portionDelivered && !hasEaten[studentID]) {
+				try {
+					wait();
+				} catch (Exception e) {
+				}
 			}
 		}
 
@@ -328,6 +342,8 @@ public class Table {
 		} catch (InterruptedException e) {
 		}
 
+		hasEaten[studentID] = true;
+
 	}
 
 	public synchronized boolean lastToEat() {
@@ -336,6 +352,9 @@ public class Table {
 			coursesDelivered++;
 			eat = 0;
 			portionsDelivered = 0;
+			for (int i = 0; i < SimulPar.S; i++) {
+				hasEaten[i] = false;
+			}
 			if (coursesDelivered == SimulPar.M) {
 				setAllFinishedEating(true);
 				notifyAll();

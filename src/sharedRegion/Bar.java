@@ -24,6 +24,8 @@ public class Bar {
 
 	private boolean actionNeeded;
 
+	private boolean bringNextCourse;
+
 	private int nLeft;
 	private int nEntered;
 	private int nSaluted;
@@ -46,6 +48,8 @@ public class Bar {
 
 	public synchronized char lookArround() {
 
+		// GenericIO.writelnString("Is looking around");
+
 		if (nLeft == SimulPar.S) {
 			setOper('e');
 			return oper;
@@ -58,6 +62,8 @@ public class Bar {
 		if (nSaluted != nEntered) {
 			setOper('c');
 			return oper;
+		} else {
+			setActionNeeded(false);
 		}
 
 		// Sleep while waiting for something to happen
@@ -66,6 +72,19 @@ public class Bar {
 				wait();
 			} catch (Exception e) {
 			}
+		}
+
+		if (oper == 'p') {
+			// Sleep while waiting for the student to signal it needs the next course
+			while (!bringNextCourse) {
+				try {
+					wait();
+				} catch (Exception e) {
+				}
+			}
+
+			// reset bringNextCourse flag
+			bringNextCourse = false;
 		}
 
 		// reseting actionNeeded flag
@@ -130,10 +149,6 @@ public class Bar {
 
 	public synchronized void returnToTheBar() {
 
-		if (oper == 'c') {
-			nSaluted++;
-		}
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
@@ -157,6 +172,20 @@ public class Bar {
 
 	}
 
+	public synchronized void canBringNextCourse() {
+		// Sleep while waiting for the student to signal it needs the next course
+		while (!bringNextCourse) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		}
+
+		// reset bringNextCourse flag
+		bringNextCourse = false;
+
+	}
+
 	public synchronized void getThePad() {
 
 		// wake up the student
@@ -165,7 +194,7 @@ public class Bar {
 	}
 
 	public synchronized void callTheWaiter() {
-
+		bringNextCourse = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('o');
@@ -199,6 +228,7 @@ public class Bar {
 	}
 
 	public synchronized void signalWaiter() {
+		bringNextCourse = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('p');

@@ -50,7 +50,7 @@ public class Waiter extends Thread {
 			switch (oper) {
 			case 'c':
 				tbl.saluteTheClient();
-				GenericIO.writelnString("Waiter saluted a client");
+				// GenericIO.writelnString("Waiter saluted a client");
 				bar.returnToTheBarAfterSalute();
 				break;
 			case 'o':

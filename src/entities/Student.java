@@ -70,11 +70,13 @@ public class Student extends Thread {
 			tbl.informCompanions();
 			GenericIO.writelnString("Student " + studentID + " has informed the companion");
 		} else {
-			GenericIO.writelnString("Student " + studentID + " has described the order");
+			GenericIO.writelnString("Student " + studentID + " will organize the order");
 			tbl.organizeOrder();
 			GenericIO.writelnString("Student " + studentID + " is going to call the waiter");
 			bar.callTheWaiter();
+			GenericIO.writelnString("Student " + studentID + " waiter has been called");
 			tbl.describeOrder();
+			GenericIO.writelnString("Student " + studentID + " has described the order");
 
 		}
 		for (int i = 0; i < SimulPar.M; i++) {
@@ -86,7 +88,7 @@ public class Student extends Thread {
 				GenericIO.writelnString("Student " + studentID + " was the last ot eat");
 				bar.signalWaiter();
 			}
-			GenericIO.writelnString("Student " + studentID + " has stopped chatting");
+			// GenericIO.writelnString("Student " + studentID + " has stopped chatting");
 		}
 
 		tbl.chat();
