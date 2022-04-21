@@ -16,6 +16,7 @@ public class Table {
 	private int coursesDelivered;
 	private int nStudents;
 	private int eat;
+	private int nOrders;
 
 	private boolean menuRead;
 	private boolean billPresented;
@@ -29,7 +30,9 @@ public class Table {
 	private boolean allFinishedEating;
 	private boolean informed;
 
-	private boolean hasEaten[];
+	private boolean noMoreCourses;
+
+	private boolean portionAccepted;
 
 	private MemFIFO<Integer> sitOrder;
 	private MemFIFO<Integer> eatOrder;
@@ -40,7 +43,6 @@ public class Table {
 	public Table(GeneralRepo repos) {
 		first = -1;
 		students = new Student[SimulPar.S];
-		hasEaten = new boolean[SimulPar.S];
 		for (int i = 0; i < students.length; i++) {
 			students[i] = null;
 		}
@@ -86,6 +88,17 @@ public class Table {
 		setPortionDelivered(true);
 		notifyAll();
 
+		// Sleep while waiting for the student to accept the portion
+		while (!portionAccepted) {
+			try {
+				wait();
+				// GenericIO.writelnString("\nwaiter waken up in deliver portion\n");
+			} catch (Exception e) {
+			}
+		}
+		// GenericIO.writelnString("\nportions delivered\n");
+		portionAccepted = false;
+
 	}
 
 	public synchronized void presentBill() {
@@ -95,7 +108,7 @@ public class Table {
 
 		billPresented = true;
 		notifyAll();
-		GenericIO.writelnString("Waiting for student to pay the bill");
+		// GenericIO.writelnString("Waiting for student to pay the bill");
 		// Sleep while waiting for the student to honor the bill
 		while (!billHonored) {
 			try {
@@ -110,6 +123,7 @@ public class Table {
 	}
 
 	public synchronized boolean haveAllPortionsBeenServed() {
+		// GenericIO.writelnString("Portions delivered: " + portionsDelivered);
 		return portionsDelivered == SimulPar.N;
 	}
 
@@ -176,11 +190,9 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGTRT);
 		repos.setStudentState(studentID, StudentStates.GGTRT);
 
-		try {
-			long v = (long) (1 + 40 * Math.random());
-			Thread.sleep(v);
+		long v = (long) (1 + 40 * Math.random());
 
-		} catch (InterruptedException e) {
+		for (int i = 0; i < v; i++) {
 		}
 
 		if (first == -1) {
@@ -245,8 +257,8 @@ public class Table {
 
 	public synchronized void informCompanions() {
 
+		nOrders++;
 		setInformed(true);
-
 		// waking up the student that takes the order
 		notifyAll();
 
@@ -260,8 +272,8 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.OGODR);
 		repos.setStudentState(studentID, StudentStates.OGODR);
 
-		// for each student wait
-		for (int i = 0; i < SimulPar.S - 1; i++) {
+		// for each student wait minus himself
+		while (nOrders < SimulPar.S - 1) {
 			// Sleep while waiting for all of the students to describes their orders
 			while (!informed) {
 				try {
@@ -305,27 +317,26 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
 
+		// GenericIO.writelnString("Student " + studentID + " is here");
+
 		// Sleep while waiting for a portion to be served or everybody has finished
 		// eating
 
-		if (!hasEaten[studentID]) {
-			while (!portionDelivered && !allFinishedEating) {
-				try {
-					wait();
-				} catch (Exception e) {
-				}
-			}
-		} else {
-			while (!portionDelivered && !hasEaten[studentID]) {
-				try {
-					wait();
-				} catch (Exception e) {
-				}
+		while (!portionDelivered && !noMoreCourses) {
+			try {
+				wait();
+				// GenericIO.writelnString("\nStudent " + studentID + " was waken up,
+				// deliveredPortions: " + portionsDelivered + "\n");
+			} catch (Exception e) {
 			}
 		}
 
 		// reset orderDescribed flag
 		setPortionDelivered(false);
+
+		// allFinishedEating = false;
+
+		// GenericIO.writelnString("\nStudent " + studentID + " is leaving\n");
 
 	}
 
@@ -337,31 +348,42 @@ public class Table {
 		((Student) Thread.currentThread()).setStudentState(StudentStates.EJYML);
 		repos.setStudentState(studentID, StudentStates.EJYML);
 
+		portionAccepted = true;
+		notifyAll();
+
 		try {
 			Thread.sleep((long) (1 + 40 * Math.random()));
 		} catch (InterruptedException e) {
 		}
 
-		hasEaten[studentID] = true;
+		// hasEaten[studentID] = true;
 
 	}
 
 	public synchronized boolean lastToEat() {
+		int studentID;
+		// set state of student
+		studentID = ((Student) Thread.currentThread()).getStudentID();
 		eat++;
+
 		if (eat == SimulPar.S) {
+			// GenericIO.writelnString("Student " + studentID + " was the last to eat");
 			coursesDelivered++;
-			eat = 0;
-			portionsDelivered = 0;
-			for (int i = 0; i < SimulPar.S; i++) {
-				hasEaten[i] = false;
-			}
+
 			if (coursesDelivered == SimulPar.M) {
 				setAllFinishedEating(true);
+				noMoreCourses = true;
 				notifyAll();
 				return false;
 			}
+			eat = 0;
+			portionsDelivered = 0;
+			setAllFinishedEating(true);
+			notifyAll();
+
 			return true;
 		}
+		setAllFinishedEating(false);
 		return false;
 	}
 
@@ -379,6 +401,9 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.PYTBL);
 		repos.setStudentState(studentID, StudentStates.PYTBL);
+
+		// GenericIO.writelnString("Student " + studentID + " is waiting for the waiter
+		// to present the bill");
 
 		while (!billPresented) {
 			try {
@@ -399,6 +424,28 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGHOM);
 		repos.setStudentState(studentID, StudentStates.GGHOM);
+
+	}
+
+	public synchronized void waitNextCourse() {
+
+		int studentID;
+		// set state of student
+		studentID = ((Student) Thread.currentThread()).getStudentID();
+		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
+		repos.setStudentState(studentID, StudentStates.CHTWC);
+
+		while (!allFinishedEating) {
+			try {
+				wait();
+				// GenericIO.writelnString("Student " + studentID + " was awaken while waiting
+				// for everyone to finish eating");
+			} catch (Exception e) {
+			}
+		}
+
+		// GenericIO.writelnString("Student " + studentID + " finished waiting and now
+		// will chat");
 
 	}
 

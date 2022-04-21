@@ -18,7 +18,7 @@ public class SimulPar {
 	 * Number of Students
 	 */
 
-	public static final int S = 4;
+	public static final int S = 7;
 
 	/**
 	 * Number of courses

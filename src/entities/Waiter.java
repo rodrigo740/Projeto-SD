@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -56,17 +55,19 @@ public class Waiter extends Thread {
 			case 'o':
 				tbl.getThePad();
 				kit.handTheNoteToTheChef();
-				bar.returnToTheBar();
+				bar.returnToTheBarAfterTakingTheOrder();
 				break;
 			case 'p':
 
 				// GenericIO.writelnString("Chef has called me");
 				while (!tbl.haveAllPortionsBeenServed()) {
+					// GenericIO.writelnString("more portions need to be delivered!");
 					kit.collectPortion();
+					// GenericIO.writelnString("Portions collected");
 					tbl.deliverPortion();
 				}
 				// GenericIO.writelnString("All portions served, returning to the bar");
-				bar.returnToTheBar();
+				bar.returnToTheBarAfterPortionsDelivered();
 				break;
 			case 'b':
 				bar.prepareBill();
@@ -85,7 +86,7 @@ public class Waiter extends Thread {
 
 		}
 
-		GenericIO.writelnString("Waiter end");
+		// GenericIO.writelnString("Waiter end");
 
 	}
 

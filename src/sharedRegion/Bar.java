@@ -26,9 +26,16 @@ public class Bar {
 
 	private boolean bringNextCourse;
 
+	private boolean readyToPay;
+
+	private boolean studentCalled;
+
+	private boolean waiterAlerted;
+
 	private int nLeft;
 	private int nEntered;
 	private int nSaluted;
+	private int nSaidGoodbye;
 
 	private MemFIFO<Integer> enterOrder;
 
@@ -47,6 +54,7 @@ public class Bar {
 	}
 
 	public synchronized char lookArround() {
+		// GenericIO.writelnString("saluted: " + nSaluted);
 
 		// GenericIO.writelnString("Is looking around");
 
@@ -59,6 +67,17 @@ public class Bar {
 			notifyAll();
 		}
 
+		if (nLeft != nSaidGoodbye) {
+			setActionNeeded(true);
+			setOper('g');
+		} else {
+			if (nLeft != 0) {
+
+				// GenericIO.writelnString("assssssasaaaaaaaaaaaaaaaa");
+				setActionNeeded(false);
+			}
+		}
+
 		if (nSaluted != nEntered) {
 			setOper('c');
 			return oper;
@@ -66,12 +85,34 @@ public class Bar {
 			setActionNeeded(false);
 		}
 
+		if (readyToPay) {
+			setOper('b');
+			return oper;
+		}
+
+		if (studentCalled) {
+			setOper('o');
+			return oper;
+		}
+
+		if (waiterAlerted) {
+			setOper('p');
+			return oper;
+		}
+
+		if (bringNextCourse) {
+			setOper('p');
+			setActionNeeded(true);
+		}
+
 		// Sleep while waiting for something to happen
 		while (!actionNeeded) {
+
 			try {
 				wait();
 			} catch (Exception e) {
 			}
+			// GenericIO.writelnString("Im hereeeeeeeeeeeee");
 		}
 
 		if (oper == 'p') {
@@ -89,7 +130,7 @@ public class Bar {
 
 		// reseting actionNeeded flag
 		setActionNeeded(false);
-		GenericIO.writelnString("Waiter action needed: " + oper);
+		// GenericIO.writelnString("Waiter action needed: " + oper);
 		return oper;
 
 	}
@@ -143,8 +184,8 @@ public class Bar {
 	}
 
 	public synchronized void sayGoodbye() {
-		nLeft++;
-		GenericIO.writelnString("Goodbye nº: " + nLeft);
+		nSaidGoodbye++;
+		// GenericIO.writelnString("Goodbye nº: " + nLeft);
 	}
 
 	public synchronized void returnToTheBar() {
@@ -158,6 +199,26 @@ public class Bar {
 	public synchronized void returnToTheBarAfterSalute() {
 
 		nSaluted++;
+
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
+		repos.setWaiterState(WaiterStates.APPST);
+
+	}
+
+	public synchronized void returnToTheBarAfterTakingTheOrder() {
+
+		studentCalled = false;
+
+		// set state of waiter
+		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
+		repos.setWaiterState(WaiterStates.APPST);
+
+	}
+
+	public synchronized void returnToTheBarAfterPortionsDelivered() {
+
+		waiterAlerted = false;
 
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
@@ -195,6 +256,7 @@ public class Bar {
 
 	public synchronized void callTheWaiter() {
 		bringNextCourse = true;
+		studentCalled = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('o');
@@ -203,6 +265,8 @@ public class Bar {
 	}
 
 	public synchronized void shouldHaveArrivedEarlier() {
+
+		readyToPay = true;
 
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
@@ -220,6 +284,7 @@ public class Bar {
 	}
 
 	public synchronized void alertWaiter() {
+		waiterAlerted = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('p');
@@ -242,14 +307,12 @@ public class Bar {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGHOM);
 		repos.setStudentState(studentID, StudentStates.GGHOM);
+		/*
+		 * // Sleep while waiting payment not received while (!paymentReceived) { try {
+		 * wait(); } catch (Exception e) { } }
+		 */
 
-		// Sleep while waiting payment not received
-		while (!paymentReceived) {
-			try {
-				wait();
-			} catch (Exception e) {
-			}
-		}
+		nLeft++;
 
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
@@ -261,6 +324,7 @@ public class Bar {
 	public synchronized void receivedPayment() {
 
 		paymentReceived = true;
+		readyToPay = false;
 
 	}
 

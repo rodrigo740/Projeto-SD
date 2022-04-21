@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import main.SimulPar;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
@@ -68,35 +67,43 @@ public class Student extends Thread {
 
 		if (!tbl.amFirst()) {
 			tbl.informCompanions();
-			GenericIO.writelnString("Student " + studentID + " has informed the companion");
+			// GenericIO.writelnString("Student " + studentID + " has informed the
+			// companion");
 		} else {
-			GenericIO.writelnString("Student " + studentID + " will organize the order");
+			// GenericIO.writelnString("Student " + studentID + " will organize the order");
 			tbl.organizeOrder();
-			GenericIO.writelnString("Student " + studentID + " is going to call the waiter");
+			// GenericIO.writelnString("Student " + studentID + " is going to call the
+			// waiter");
 			bar.callTheWaiter();
-			GenericIO.writelnString("Student " + studentID + " waiter has been called");
+			// GenericIO.writelnString("Student " + studentID + " waiter has been called");
 			tbl.describeOrder();
-			GenericIO.writelnString("Student " + studentID + " has described the order");
+			// GenericIO.writelnString("Student " + studentID + " has described the order");
 
 		}
 		for (int i = 0; i < SimulPar.M; i++) {
 			tbl.chat();
-
+			// GenericIO.writelnString("Student " + studentID + " received a portion");
 			tbl.enjoyMeal();
-			GenericIO.writelnString("Student " + studentID + " has eaten");
+			// GenericIO.writelnString("Student " + studentID + " has eaten");
 			if (tbl.lastToEat()) {
-				GenericIO.writelnString("Student " + studentID + " was the last ot eat");
+				// GenericIO.writelnString("Student " + studentID + " was the last ot eat");
 				bar.signalWaiter();
+			} else {
+				// GenericIO.writelnString( "Student " + studentID + " wans't the last to eat,
+				// waiting for other students.....");
+				tbl.waitNextCourse();
 			}
 			// GenericIO.writelnString("Student " + studentID + " has stopped chatting");
 		}
 
+		// GenericIO.writelnString("Student " + studentID + " has no more courses");
+
 		tbl.chat();
 		if (tbl.amLast()) {
-			GenericIO.writelnString("Student " + studentID + " must honor the bill");
+			// GenericIO.writelnString("Student " + studentID + " must honor the bill");
 			bar.shouldHaveArrivedEarlier();
 			tbl.honorTheBill();
-			GenericIO.writelnString("Student " + studentID + " has honored the bill");
+			// GenericIO.writelnString("Student " + studentID + " has honored the bill");
 		}
 		bar.goHome();
 

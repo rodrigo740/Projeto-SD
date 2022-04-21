@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -65,7 +64,7 @@ public class Chef extends Thread {
 		} while (!kit.orderBeenCompleted());
 
 		kit.cleanUp();
-		GenericIO.writelnString("Chef end");
+		// GenericIO.writelnString("Chef end");
 	}
 
 }

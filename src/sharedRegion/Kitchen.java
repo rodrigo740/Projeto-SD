@@ -205,6 +205,8 @@ public class Kitchen {
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.WTFPT);
 		repos.setWaiterState(WaiterStates.WTFPT);
 
+		// GenericIO.writelnString("\nwaiter is waiting for another Portion\n");
+
 		// Sleep while waiting for a portion to be ready to be ready
 		while (!portionReady) {
 			try {
