@@ -1,5 +1,6 @@
 package entities;
 
+import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -48,34 +49,40 @@ public class Waiter extends Thread {
 			oper = bar.lookArround();
 			switch (oper) {
 			case 'c':
+				GenericIO.writelnString("Going to salute a client");
 				tbl.saluteTheClient();
-				// GenericIO.writelnString("Waiter saluted a client");
+				GenericIO.writelnString("Returning to the bar after saluting");
 				bar.returnToTheBarAfterSalute();
 				break;
 			case 'o':
+				GenericIO.writelnString("Going to take the order");
 				tbl.getThePad();
 				kit.handTheNoteToTheChef();
+				GenericIO.writelnString("Returning to the bar after receiving an order and delivering it to the chef");
 				bar.returnToTheBarAfterTakingTheOrder();
 				break;
 			case 'p':
 
-				// GenericIO.writelnString("Chef has called me");
+				GenericIO.writelnString("Going to collect a portion");
 				while (!tbl.haveAllPortionsBeenServed()) {
-					// GenericIO.writelnString("more portions need to be delivered!");
+					GenericIO.writelnString("more portions need to be delivered!");
 					kit.collectPortion();
 					// GenericIO.writelnString("Portions collected");
 					tbl.deliverPortion();
 				}
-				// GenericIO.writelnString("All portions served, returning to the bar");
+				GenericIO.writelnString("All portions served, returning to the bar");
 				bar.returnToTheBarAfterPortionsDelivered();
 				break;
 			case 'b':
+				GenericIO.writelnString("Preparing the bill");
 				bar.prepareBill();
 				tbl.presentBill();
 				bar.receivedPayment();
+				GenericIO.writelnString("Got the payment, returning to the bar");
 				bar.returnToTheBar();
 				break;
 			case 'g':
+				GenericIO.writelnString("Goodbye");
 				bar.sayGoodbye();
 				bar.returnToTheBar();
 				break;

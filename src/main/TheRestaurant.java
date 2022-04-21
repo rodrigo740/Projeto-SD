@@ -29,15 +29,14 @@ public class TheRestaurant {
 
 		/* problem initialization */
 
-		// GenericIO.writelnString("\n" + "\tThe Restaurant Problem\n");
+		GenericIO.writelnString("\n" + "\tThe Restaurant Problem\n");
 
 		do {
-			// GenericIO.writeString("Logging file name? ");
+			GenericIO.writeString("Logging file name? ");
 			fileName = GenericIO.readlnString();
 			if (FileOp.exists(".", fileName)) {
 				do {
-					// GenericIO.writeString("There is already a file with this name. Delete it (y -
-					// yes; n - no)? ");
+					GenericIO.writeString("There is already a file with this name. Delete it (y - yes; n - no)? ");
 					opt = GenericIO.readlnChar();
 				} while ((opt != 'y') && (opt != 'n'));
 				if (opt == 'y')
@@ -74,7 +73,7 @@ public class TheRestaurant {
 
 		/* waiting for the simulation to finish */
 
-		// GenericIO.writelnString();
+		GenericIO.writelnString();
 
 		try {
 			chef.join();
@@ -96,7 +95,7 @@ public class TheRestaurant {
 			}
 		}
 
-		// GenericIO.writelnString();
+		GenericIO.writelnString();
 
 	}
 
