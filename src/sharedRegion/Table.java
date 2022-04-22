@@ -20,8 +20,6 @@ public class Table {
 
 	private boolean menuRead;
 	private boolean billPresented;
-	private boolean organizingOrder;
-	private boolean allHaveChosen;
 	private boolean orderDescribed;
 	private boolean billHonored;
 	private boolean clientSaluted;
@@ -35,7 +33,6 @@ public class Table {
 	private boolean portionAccepted;
 
 	private MemFIFO<Integer> sitOrder;
-	private MemFIFO<Integer> eatOrder;
 
 	private final Student[] students;
 	private final GeneralRepo repos;
@@ -49,17 +46,21 @@ public class Table {
 
 		try {
 			sitOrder = new MemFIFO<>(new Integer[SimulPar.S]);
-			eatOrder = new MemFIFO<>(new Integer[SimulPar.S]);
 		} catch (Exception e) {
-			GenericIO.writelnString("Instantiation of sit/eat order FIFO failed: " + e.getMessage());
+			GenericIO.writelnString("Instantiation of sit order FIFO failed: " + e.getMessage());
 			sitOrder = null;
-			eatOrder = null;
 			System.exit(1);
 		}
 
 		this.repos = repos;
 	}
 
+	/**
+	 * Operation salute the client.
+	 *
+	 * It is called by a waiter to salute the client
+	 * 
+	 */
 	public synchronized void saluteTheClient() {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRSMN);
@@ -82,6 +83,12 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation deliver portion.
+	 *
+	 * It is called by a waiter to deliver a portion to a student
+	 * 
+	 */
 	public synchronized void deliverPortion() {
 
 		portionsDelivered++;
@@ -101,6 +108,12 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation present the bill.
+	 *
+	 * It is called by a waiter to present the bill to the student
+	 * 
+	 */
 	public synchronized void presentBill() {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.RECPM);
@@ -122,10 +135,24 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation have all portions been served
+	 *
+	 * It is called by a waiter to know if all the portions have been served
+	 * 
+	 */
+
 	public synchronized boolean haveAllPortionsBeenServed() {
 		// GenericIO.writelnString("Portions delivered: " + portionsDelivered);
 		return portionsDelivered == SimulPar.N;
 	}
+
+	/**
+	 * Operation get the pad
+	 *
+	 * It is called by a waiter to get the pad
+	 * 
+	 */
 
 	public synchronized void getThePad() {
 		// set state of waiter
@@ -148,40 +175,97 @@ public class Table {
 		setOrderDescribed(false);
 	}
 
+	/**
+	 * Operation set portion delivered
+	 *
+	 * This function sets the value of portionDelivered flag
+	 *
+	 * @param b
+	 */
+
 	private synchronized void setPortionDelivered(boolean b) {
 		portionDelivered = b;
 
 	}
 
+	/**
+	 * Operation set all finished eating
+	 *
+	 * This function sets the value of allFinishedEating flag
+	 *
+	 * @param b
+	 */
 	private synchronized void setAllFinishedEating(boolean b) {
 		allFinishedEating = b;
 
 	}
 
+	/**
+	 * Operation set got the pad
+	 *
+	 * This function sets the value of gotThePad flag
+	 *
+	 * @param b
+	 */
 	private synchronized void setGotThePad(boolean b) {
 		gotThePad = b;
 
 	}
 
+	/**
+	 * Operation set order described
+	 *
+	 * This function sets the value of orderDescribed flag
+	 *
+	 * @param b
+	 */
 	public synchronized void setOrderDescribed(boolean described) {
 		orderDescribed = described;
 
 	}
 
+	/**
+	 * Operation set bill honored
+	 *
+	 * This function sets the value of billHonored flag
+	 *
+	 * @param b
+	 */
 	public synchronized void setBillHonored(boolean honored) {
 		billHonored = honored;
 
 	}
+
+	/**
+	 * Operation set client saluted
+	 *
+	 * This function sets the value of clientSaluted flag
+	 *
+	 * @param b
+	 */
 
 	public synchronized void setClientSaluted(boolean saluted) {
 		clientSaluted = saluted;
 
 	}
 
+	/**
+	 * Operation set informed
+	 *
+	 * This function sets the value of informed flag
+	 *
+	 * @param b
+	 */
 	public synchronized void setInformed(boolean b) {
 		informed = b;
-
 	}
+
+	/**
+	 * Operation walk
+	 *
+	 * It is called by a student to going to wander before entering the restaurant
+	 * 
+	 */
 
 	public synchronized void walk() {
 		int studentID;
@@ -201,6 +285,12 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation take a seat
+	 *
+	 * It is called by a student when it wants to take a seat at the table
+	 * 
+	 */
 	public synchronized void takeASeat() {
 		int studentID;
 		// set state of student
@@ -233,6 +323,12 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation selecting the course
+	 *
+	 * It is called by a student to know if all the portions have been served
+	 * 
+	 */
 	public synchronized void selectingCourse() {
 		int studentID;
 		// set state of student
@@ -246,7 +342,14 @@ public class Table {
 
 	}
 
-	public synchronized boolean amFirst() {
+	/**
+	 * Operation first to enter
+	 *
+	 * It is called by a student to know if it was the first to enter in the
+	 * restaurant
+	 * 
+	 */
+	public synchronized boolean firstToEnter() {
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
@@ -255,6 +358,11 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation inform companions
+	 *
+	 * It is called by a student to inform the companion about its order
+	 */
 	public synchronized void informCompanions() {
 
 		nOrders++;
@@ -263,6 +371,13 @@ public class Table {
 		notifyAll();
 
 	}
+
+	/**
+	 * Operation organize order
+	 *
+	 * It is called by a student to start organizing the order
+	 * 
+	 */
 
 	public synchronized void organizeOrder() {
 
@@ -286,6 +401,13 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation describe order
+	 *
+	 * It is called by a student to describe the order to the waiter
+	 * 
+	 */
+
 	public synchronized void describeOrder() {
 
 		// Sleep while waiting for the waiter to get the pad
@@ -308,6 +430,13 @@ public class Table {
 		notifyAll();
 
 	}
+
+	/**
+	 * Operation chat
+	 *
+	 * It is called by a student to start chatting with the companions
+	 * 
+	 */
 
 	public synchronized void chat() {
 
@@ -340,6 +469,13 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation enjoy the meal
+	 *
+	 * It is called by a student to start eating the portion
+	 * 
+	 */
+
 	public synchronized void enjoyMeal() {
 
 		int studentID;
@@ -355,11 +491,14 @@ public class Table {
 			Thread.sleep((long) (1 + 40 * Math.random()));
 		} catch (InterruptedException e) {
 		}
-
-		// hasEaten[studentID] = true;
-
 	}
 
+	/**
+	 * Operation last to eat
+	 *
+	 * It is called by a student to know if it was the last to eat the portion
+	 * 
+	 */
 	public synchronized boolean lastToEat() {
 		int studentID;
 		// set state of student
@@ -387,12 +526,27 @@ public class Table {
 		return false;
 	}
 
-	public synchronized boolean amLast() {
+	/**
+	 * Operation last to enter restaurant
+	 *
+	 * It is called by a student to know if it was the last to enter in the
+	 * restaurant
+	 * 
+	 */
+
+	public synchronized boolean lastToEnterRestaurant() {
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		return studentID == sitOrder.getLast();
 	}
+
+	/**
+	 * Operation honor the bill
+	 *
+	 * It is called by a student to honor the bill
+	 * 
+	 */
 
 	public synchronized void honorTheBill() {
 
@@ -418,6 +572,12 @@ public class Table {
 
 	}
 
+	/**
+	 * Operation go home
+	 *
+	 * It is called by a student to leave the restaurant and go home
+	 * 
+	 */
 	public synchronized void goHome() {
 		int studentID;
 		// set state of student
@@ -427,7 +587,14 @@ public class Table {
 
 	}
 
-	public synchronized void waitNextCourse() {
+	/**
+	 * Operation wait for everyone to finish
+	 *
+	 * It is called by a student to wait of everyone to finish eating the current
+	 * course
+	 * 
+	 */
+	public synchronized void waitForEveryoneToFinish() {
 
 		int studentID;
 		// set state of student

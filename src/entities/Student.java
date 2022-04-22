@@ -65,7 +65,7 @@ public class Student extends Thread {
 		tbl.selectingCourse();
 		GenericIO.writelnString("Student " + studentID + " has selected a course");
 
-		if (!tbl.amFirst()) {
+		if (!tbl.firstToEnter()) {
 			tbl.informCompanions();
 			GenericIO.writelnString("Student " + studentID + " has informed the companion");
 		} else {
@@ -89,7 +89,7 @@ public class Student extends Thread {
 			} else {
 				GenericIO.writelnString(
 						"Student " + studentID + " wasn't the last to eat, waiting for other students.....");
-				tbl.waitNextCourse();
+				tbl.waitForEveryoneToFinish();
 			}
 			GenericIO.writelnString("Student " + studentID + " has stopped chatting");
 		}
@@ -97,7 +97,7 @@ public class Student extends Thread {
 		GenericIO.writelnString("Student " + studentID + " has no more courses");
 
 		tbl.chat();
-		if (tbl.amLast()) {
+		if (tbl.lastToEnterRestaurant()) {
 			GenericIO.writelnString("Student " + studentID + " must honor the bill");
 			bar.shouldHaveArrivedEarlier();
 			tbl.honorTheBill();
