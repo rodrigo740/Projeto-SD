@@ -3,7 +3,6 @@ package sharedRegion;
 import java.util.Objects;
 
 import entities.ChefStates;
-import entities.Student;
 import entities.StudentStates;
 import entities.WaiterStates;
 import genclass.GenericIO;
@@ -18,6 +17,8 @@ public class GeneralRepo {
 	private int waiterState;
 	private int studentsState[];
 	private int seat[];
+	private int portionsDelivered;
+	private int coursesDelivered;
 
 	public GeneralRepo(String logFileName) {
 
@@ -52,11 +53,20 @@ public class GeneralRepo {
 
 	public synchronized void setStudentState(int id, int state) {
 		studentsState[id] = state;
-		if (((Student) Thread.currentThread()).getSeat() != -1) {
-			seat[((Student) Thread.currentThread()).getSeat()] = ((Student) Thread.currentThread()).getStudentID();
-		}
 		reportStatus();
 
+	}
+
+	public synchronized void setStudentSeat(int studentID, int n) {
+		seat[n] = studentID;
+	}
+
+	public synchronized void setPortionsDelivered(int n) {
+		portionsDelivered = n;
+	}
+
+	public synchronized void setCoursesDelivered(int n) {
+		coursesDelivered = n;
 	}
 
 	private void reportInitialStatus() {
@@ -67,27 +77,10 @@ public class GeneralRepo {
 			System.exit(1);
 		}
 
-		log.writelnString("                The Restaurant - Description of the internal state");
-		String s = " Chef  Waiter  Stu 0  Stu 1  Stu 2  Stu 3  Stu 4  Stu 5  Stu 6  NCourse  NPortion  \t  \t  \t \t Table\nState State   State  State  State  State  State  State  State \t"
-				+ SimulPar.M + "\t \t \t" + SimulPar.N + "\t  Seat0  Seat1  Seat2  Seat3  Seat4  Seat5  Seat6";
+		log.writelnString(" \t\t\t\t\t\t  The Restaurant - Description of the internal state\n");
+		String s = "  Chef  Waiter   Stu0   Stu1   Stu2   Stu3   Stu4   Stu5   Stu6   NCourse  NPortion\t\t\tTable\n State  State   State  State  State  State  State  State  State\t\t\t      Seat0 Seat1 Seat2 Seat3 Seat4 Seat5 Seat6";
 		log.writelnString(s);
 
-		/*
-		 * log.
-		 * writelnString("                The Restaurant - Description of the internal state"
-		 * ); String s = " Chef  Waiter ";
-		 * 
-		 * for (int i = 0; i < SimulPar.S; i++) { s += " stu" + i + " "; } s +=
-		 * "NCourse  NPortion  \t  \t  \t \t Table\n";
-		 * 
-		 * for (int i = 0; i < SimulPar.S + SimulPar.C + SimulPar.W; i++) { s +=
-		 * "  State "; }
-		 * 
-		 * s += "\t" + SimulPar.M + "  " + SimulPar.N + "\t";
-		 * 
-		 * for (int i = 0; i < SimulPar.S; i++) { s += " Seat" + i + " "; }
-		 * log.writelnString(s);
-		 */
 		if (!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + logFileName + " failed!");
 			System.exit(1);
@@ -126,25 +119,25 @@ public class GeneralRepo {
 
 		switch (waiterState) {
 		case WaiterStates.APPST:
-			lineStatus += " APPST ";
+			lineStatus += " APPST  ";
 			break;
 		case WaiterStates.PRSMN:
-			lineStatus += " PRSMN ";
+			lineStatus += " PRSMN  ";
 			break;
 		case WaiterStates.TKODR:
-			lineStatus += " TKODR ";
+			lineStatus += " TKODR  ";
 			break;
 		case WaiterStates.PCODR:
-			lineStatus += " PCODR ";
+			lineStatus += " PCODR  ";
 			break;
 		case WaiterStates.WTFPT:
-			lineStatus += " WTFPT ";
+			lineStatus += " WTFPT  ";
 			break;
 		case WaiterStates.PRCBL:
-			lineStatus += " PRCBL ";
+			lineStatus += " PRCBL  ";
 			break;
 		case WaiterStates.RECPM:
-			lineStatus += " RECPM ";
+			lineStatus += " RECPM  ";
 			break;
 		}
 
@@ -179,11 +172,13 @@ public class GeneralRepo {
 
 		}
 
+		lineStatus += "     " + coursesDelivered + " \t      " + portionsDelivered + "        ";
+
 		for (int i = 0; i < SimulPar.S; i++) {
 			if (seat[i] == -1) {
-				lineStatus += " \t ";
+				lineStatus += " #    ";
 			} else {
-				lineStatus += " " + seat[i] + " ";
+				lineStatus += " " + seat[i] + "    ";
 			}
 
 		}
