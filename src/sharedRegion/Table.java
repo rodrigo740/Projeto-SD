@@ -92,6 +92,7 @@ public class Table {
 	public synchronized void deliverPortion() {
 
 		portionsDelivered++;
+		repos.setPortionsDelivered(portionsDelivered);
 		setPortionDelivered(true);
 		notifyAll();
 
@@ -307,6 +308,7 @@ public class Table {
 		}
 
 		((Student) Thread.currentThread()).setSeat(nStudents);
+		repos.setStudentSeat(studentID, nStudents);
 		nStudents++;
 		// GenericIO.writelnString("Student " + studentID + " is waiting for the waiter
 		// to salute him");
@@ -508,6 +510,7 @@ public class Table {
 		if (eat == SimulPar.S) {
 			// GenericIO.writelnString("Student " + studentID + " was the last to eat");
 			coursesDelivered++;
+			repos.setCoursesDelivered(coursesDelivered);
 
 			if (coursesDelivered == SimulPar.M) {
 				setAllFinishedEating(true);
