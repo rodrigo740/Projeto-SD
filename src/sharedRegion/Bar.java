@@ -1,14 +1,11 @@
 package sharedRegion;
 
-import commInfra.MemFIFO;
 import entities.Student;
 import entities.StudentStates;
 import entities.Waiter;
 import entities.WaiterStates;
-import genclass.GenericIO;
 import main.SimulPar;
 
-//falta ver os comentarios das variaveis estao bem
 /**
  * Bar.
  *
@@ -20,10 +17,7 @@ import main.SimulPar;
  * signal that he can bring the next course.
  */
 public class Bar {
-	/**
-	 * Reference to the waiter.
-	 */
-	private final Waiter waiter;
+
 	/**
 	 * Reference to the General Information Repository.
 	 */
@@ -98,22 +92,12 @@ public class Bar {
 	 */
 	private int nSaidGoodbye;
 
-	private MemFIFO<Integer> enterOrder;
-
 	/**
 	 * Bar instantiation
 	 * 
 	 * @param repos reference to the General Information Repository
 	 */
 	public Bar(GeneralRepo repos) {
-		try {
-			enterOrder = new MemFIFO<>(new Integer[SimulPar.S]);
-		} catch (Exception e) {
-			GenericIO.writelnString("Instantiation of enter order FIFO failed: " + e.getMessage());
-			enterOrder = null;
-			System.exit(1);
-		}
-		this.waiter = null;
 		this.repos = repos;
 	}
 
@@ -333,7 +317,6 @@ public class Bar {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
-
 	}
 
 	/**
@@ -347,7 +330,6 @@ public class Bar {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
-
 	}
 
 	/**
@@ -362,7 +344,6 @@ public class Bar {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
-
 	}
 
 	/**

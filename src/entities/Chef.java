@@ -2,7 +2,6 @@ package entities;
 
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
-import sharedRegion.Table;
 
 /**
  * Chef thread.
@@ -26,10 +25,6 @@ public class Chef extends Thread {
 	 * Reference to the Kitchen
 	 */
 	private final Kitchen kit;
-	/**
-	 * Reference to the Table
-	 */
-	private final Table tbl;
 
 	/**
 	 * Instantiation of a Chef Thread
@@ -39,15 +34,13 @@ public class Chef extends Thread {
 	 * @param chefState state of the chef
 	 * @param bar       reference of the Bar
 	 * @param kit       reference of the Kitchen
-	 * @param tbl       reference of the Table
 	 */
-	public Chef(String name, int chefID, int chefState, Bar bar, Kitchen kit, Table tbl) {
+	public Chef(String name, int chefID, int chefState, Bar bar, Kitchen kit) {
 		super(name);
 		this.chefID = chefID;
 		this.chefState = ChefStates.WAFOR;
 		this.bar = bar;
 		this.kit = kit;
-		this.tbl = tbl;
 	}
 
 	/**

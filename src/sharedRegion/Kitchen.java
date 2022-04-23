@@ -19,10 +19,7 @@ import main.SimulPar;
  */
 
 public class Kitchen {
-	/**
-	 * Reference to the Chef.
-	 */
-	private final Chef chef;
+
 	/**
 	 * Reference to the General Information Repository.
 	 */
@@ -55,7 +52,6 @@ public class Kitchen {
 	 * @param repos reference to the General Information Repository
 	 */
 	public Kitchen(GeneralRepo repos) {
-		this.chef = null;
 		this.repos = repos;
 	}
 
@@ -198,7 +194,7 @@ public class Kitchen {
 		// set portionReady flag
 		setPortionReady(true);
 		notifyAll();
-		// Sleep while waiting for order to arrive
+		// Sleep while waiting for the portion to be collected
 		while (!portionCollected) {
 			try {
 				wait();
@@ -222,7 +218,7 @@ public class Kitchen {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.WTFPT);
 		repos.setWaiterState(WaiterStates.WTFPT);
-		// Sleep while waiting for a portion to be ready to be ready
+		// Sleep while waiting for a portion to be ready
 		while (!portionReady) {
 			try {
 				wait();

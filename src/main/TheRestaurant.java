@@ -10,20 +10,31 @@ import sharedRegion.GeneralRepo;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
 
+/**
+ * Simulation of the Assignment 1 - TheRestaurant. (number of threads controlled
+ * by global constants - SimulPar)
+ */
+
 public class TheRestaurant {
+
+	/**
+	 * Main method.
+	 *
+	 * @param args runtime arguments
+	 */
 
 	public static void main(String[] args) {
 
-		Student students[] = new Student[SimulPar.S];
-		Waiter waiter;
-		Chef chef;
+		Student students[] = new Student[SimulPar.S]; // reference to the student threads
+		Waiter waiter; // reference to the waiter thread
+		Chef chef; // reference to the chef thread
 
-		Table table;
-		Bar bar;
-		Kitchen kitchen;
-		GeneralRepo repos;
+		Table table; // reference to the table
+		Bar bar; // reference to the bar
+		Kitchen kitchen; // reference to the kitchen
+		GeneralRepo repos; // reference to the GeneralRepo
 
-		String fileName;
+		String fileName; // name of the logger file
 		char opt;
 		boolean success;
 
@@ -56,10 +67,10 @@ public class TheRestaurant {
 		kitchen = new Kitchen(repos);
 
 		waiter = new Waiter("Waiter", 1, 0, bar, kitchen, table);
-		chef = new Chef("Chef", 1, 0, bar, kitchen, table);
+		chef = new Chef("Chef", 1, 0, bar, kitchen);
 
 		for (int i = 0; i < SimulPar.S; i++) {
-			students[i] = new Student("Student_" + (i + 1), i, bar, kitchen, table);
+			students[i] = new Student("Student_" + (i + 1), i, bar, table);
 		}
 
 		/* start the simulation */

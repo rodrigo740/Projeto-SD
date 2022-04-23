@@ -6,7 +6,6 @@ import entities.Student;
 import entities.StudentStates;
 import entities.Waiter;
 import entities.WaiterStates;
-import genclass.GenericIO;
 import main.SimulPar;
 
 /**
@@ -28,6 +27,16 @@ import main.SimulPar;
  */
 
 public class Table {
+
+	/**
+	 * id of the last student to eat in a course
+	 */
+	private int lastToEatID;
+
+	/**
+	 * Number of students currently chatting
+	 */
+	private int nChatting;
 
 	/**
 	 * id of the first student to enter the restaurant.
@@ -136,7 +145,7 @@ public class Table {
 	 * MemFIFO that has the order of the students at the table
 	 */
 
-	private MemFIFO<Integer> sitOrder;
+	private MemFIFO<Integer> seatOrder;
 
 	/**
 	 * Reference to the students.
@@ -159,15 +168,15 @@ public class Table {
 		// first starts at -1 and only the first student to enter will change it to its
 		// ID
 		first = -1;
+		lastToEatID = -1;
 		students = new Student[SimulPar.S];
 		for (int i = 0; i < students.length; i++) {
 			students[i] = null;
 		}
 		try {
-			sitOrder = new MemFIFO<>(new Integer[SimulPar.S]);
+			seatOrder = new MemFIFO<>(new Integer[SimulPar.S]);
 		} catch (Exception e) {
-			GenericIO.writelnString("Instantiation of sit order FIFO failed: " + e.getMessage());
-			sitOrder = null;
+			seatOrder = null;
 			System.exit(1);
 		}
 		this.repos = repos;
@@ -195,7 +204,6 @@ public class Table {
 		}
 		// reset menuRead flag
 		menuRead = false;
-
 	}
 
 	/**
@@ -372,7 +380,7 @@ public class Table {
 		repos.setStudentState(studentID, StudentStates.TKSTT);
 		// adding student to the sit order FIFO
 		try {
-			sitOrder.write(studentID);
+			seatOrder.write(studentID);
 		} catch (MemException e1) {
 			e1.printStackTrace();
 		}
@@ -486,6 +494,17 @@ public class Table {
 	}
 
 	/**
+	 * Operation chatAgain
+	 *
+	 * It is called by the last student to eat to wake up the other students
+	 * 
+	 */
+
+	public synchronized void chatAgain() {
+		notifyAll();
+	}
+
+	/**
 	 * Operation chat
 	 *
 	 * It is called by a student to start chatting with the companions
@@ -498,16 +517,31 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
-		// Sleep while waiting for a portion to be served or everybody has finished
-		// eating
+		nChatting++;
+		if (lastToEatID == studentID) {
+			lastToEatID = -1;
+		}
+		if (nChatting < SimulPar.S) {
+			try {
+				wait();
+			} catch (Exception e) {
+			}
+		} else {
+			allFinishedEating = false;
+			nChatting = 0;
+		}
 		while (!portionDelivered && !noMoreCourses) {
 			try {
 				wait();
 			} catch (Exception e) {
 			}
 		}
-		// reset portionDelivered flag
-		setPortionDelivered(false);
+		if (portionDelivered) {
+			// set portion accepted flag
+			portionAccepted = true;
+			setPortionDelivered(false);
+			notifyAll();
+		}
 	}
 
 	/**
@@ -523,9 +557,6 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.EJYML);
 		repos.setStudentState(studentID, StudentStates.EJYML);
-		// set portion accepted flag
-		portionAccepted = true;
-		notifyAll();
 		try {
 			Thread.sleep((long) (1 + 40 * Math.random()));
 		} catch (InterruptedException e) {
@@ -538,6 +569,7 @@ public class Table {
 	 * It is called by a student to know if it was the last to eat the portion
 	 * 
 	 */
+
 	public synchronized boolean lastToEat() {
 		int studentID;
 		// set state of student
@@ -545,21 +577,22 @@ public class Table {
 		// increase number of portions eaten
 		eat++;
 		if (eat == SimulPar.S) {
+			lastToEatID = studentID;
 			coursesDelivered++;
 			repos.setCoursesDelivered(coursesDelivered);
 			if (coursesDelivered == SimulPar.M) {
-				setAllFinishedEating(true);
+				allFinishedEating = true;
 				noMoreCourses = true;
 				notifyAll();
-				return false;
+				return true;
 			}
 			eat = 0;
 			portionsDelivered = 0;
-			setAllFinishedEating(true);
+			repos.setPortionsDelivered(portionsDelivered);
+			allFinishedEating = true;
 			notifyAll();
 			return true;
 		}
-		setAllFinishedEating(false);
 		return false;
 	}
 
@@ -574,7 +607,7 @@ public class Table {
 	public synchronized boolean lastToEnterRestaurant() {
 		// set state of student
 		int studentID = ((Student) Thread.currentThread()).getStudentID();
-		return studentID == sitOrder.getLast();
+		return studentID == seatOrder.getLast();
 	}
 
 	/**
@@ -631,7 +664,6 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
-		// sleep while waiting or everyone to finish eating the current course
 		while (!allFinishedEating) {
 			try {
 				wait();

@@ -2,7 +2,6 @@ package entities;
 
 import main.SimulPar;
 import sharedRegion.Bar;
-import sharedRegion.Kitchen;
 import sharedRegion.Table;
 
 /**
@@ -30,10 +29,7 @@ public class Student extends Thread {
 	 * Reference to the Bar
 	 */
 	private final Bar bar;
-	/**
-	 * Reference to the Kitchen
-	 */
-	private final Kitchen kit;
+
 	/**
 	 * Reference to the Table
 	 */
@@ -45,15 +41,13 @@ public class Student extends Thread {
 	 * @param name      thread main
 	 * @param studentID ID of the student
 	 * @param bar       reference to the Bar
-	 * @param kit       reference to the Kitchen
 	 * @param tbl       reference to the Table
 	 */
-	public Student(String name, int studentID, Bar bar, Kitchen kit, Table tbl) {
+	public Student(String name, int studentID, Bar bar, Table tbl) {
 		super(name);
 		this.studentID = studentID;
 		this.studentState = StudentStates.GGTRT;
 		this.bar = bar;
-		this.kit = kit;
 		this.tbl = tbl;
 		this.seat = -1;
 	}
@@ -138,14 +132,15 @@ public class Student extends Thread {
 			// Transition to 'EJYML'
 			tbl.enjoyMeal();
 			if (tbl.lastToEat()) {
-				bar.signalWaiter();
+				if (i != 2) {
+					bar.signalWaiter();
+				}
+				tbl.chatAgain();
 			} else {
 				// Transition to 'CHTWC'
 				tbl.waitForEveryoneToFinish();
 			}
 		}
-		// Transition to 'CHTWC'
-		tbl.chat();
 		if (tbl.lastToEnterRestaurant()) {
 			bar.shouldHaveArrivedEarlier();
 			// Transition to 'PYTBL'
@@ -168,7 +163,5 @@ public class Student extends Thread {
 			Thread.sleep(v);
 		} catch (InterruptedException e) {
 		}
-
 	}
-
 }
