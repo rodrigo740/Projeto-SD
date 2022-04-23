@@ -29,37 +29,140 @@ import main.SimulPar;
 
 public class Table {
 
+	/**
+	 * id of the first student to enter the restaurant.
+	 */
+
 	private int first;
+
+	/**
+	 * number of portions delivered
+	 */
+
 	private int portionsDelivered;
+
+	/**
+	 * number of courses delivered
+	 */
+
 	private int coursesDelivered;
+
+	/**
+	 * number of students that entered the restaurant
+	 */
+
 	private int nStudents;
+
+	/**
+	 * number of students that have eaten a portion of the current course
+	 */
+
 	private int eat;
+
+	/**
+	 * number of orders received by the student that is organizing the order
+	 */
+
 	private int nOrders;
 
+	/**
+	 * Boolean flag that indicates if the menu has been read by a student
+	 */
 	private boolean menuRead;
+
+	/**
+	 * Boolean flag that indicates if the bill has been presented to the student
+	 */
+
 	private boolean billPresented;
+
+	/**
+	 * Boolean flag that indicates if the order has been described to the waiter
+	 */
+
 	private boolean orderDescribed;
+
+	/**
+	 * Boolean flag that indicates if the bill has been honored
+	 */
+
 	private boolean billHonored;
+
+	/**
+	 * Boolean flag that indicates if the a student has been saluted
+	 */
+
 	private boolean clientSaluted;
+
+	/**
+	 * Boolean flag that indicates if the waiter got the pad
+	 */
+
 	private boolean gotThePad;
+
+	/**
+	 * Boolean flag that indicates if a portion has been delivered
+	 */
+
 	private boolean portionDelivered;
+
+	/**
+	 * Boolean flag that indicates if everyone has finished eating the current
+	 * course
+	 */
+
 	private boolean allFinishedEating;
+
+	/**
+	 * Boolean flag that indicates if a student has informed the student that is
+	 * responsible to take everyones order
+	 */
+
 	private boolean informed;
+
+	/**
+	 * Boolean flag that indicates if there are no more courses in the order
+	 */
+
 	private boolean noMoreCourses;
+
+	/**
+	 * Boolean flag that indicates if the portion has been accepted
+	 */
+
 	private boolean portionAccepted;
+
+	/**
+	 * MemFIFO that has the order of the students at the table
+	 */
 
 	private MemFIFO<Integer> sitOrder;
 
+	/**
+	 * Reference to the students.
+	 */
+
 	private final Student[] students;
+
+	/**
+	 * Reference to the General Repository.
+	 */
+
 	private final GeneralRepo repos;
 
+	/**
+	 * Table instantiation.
+	 *
+	 * @param repos reference to the general repository
+	 */
 	public Table(GeneralRepo repos) {
+		// first starts at -1 and only the first student to enter will change it to its
+		// ID
 		first = -1;
 		students = new Student[SimulPar.S];
 		for (int i = 0; i < students.length; i++) {
 			students[i] = null;
 		}
-
 		try {
 			sitOrder = new MemFIFO<>(new Integer[SimulPar.S]);
 		} catch (Exception e) {
@@ -67,7 +170,6 @@ public class Table {
 			sitOrder = null;
 			System.exit(1);
 		}
-
 		this.repos = repos;
 	}
 
@@ -81,11 +183,9 @@ public class Table {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRSMN);
 		repos.setWaiterState(WaiterStates.PRSMN);
-
 		// setting clientSaluted flag and waking up the student
 		setClientSaluted(true);
 		notifyAll();
-
 		// Sleep while waiting for the student to read the menu
 		while (!menuRead) {
 			try {
@@ -93,7 +193,6 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-
 		// reset menuRead flag
 		menuRead = false;
 
@@ -106,23 +205,18 @@ public class Table {
 	 * 
 	 */
 	public synchronized void deliverPortion() {
-
 		portionsDelivered++;
 		repos.setPortionsDelivered(portionsDelivered);
 		setPortionDelivered(true);
 		notifyAll();
-
 		// Sleep while waiting for the student to accept the portion
 		while (!portionAccepted) {
 			try {
 				wait();
-				// GenericIO.writelnString("\nwaiter waken up in deliver portion\n");
 			} catch (Exception e) {
 			}
 		}
-		// GenericIO.writelnString("\nportions delivered\n");
 		portionAccepted = false;
-
 	}
 
 	/**
@@ -135,10 +229,8 @@ public class Table {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.RECPM);
 		repos.setWaiterState(WaiterStates.RECPM);
-
 		billPresented = true;
 		notifyAll();
-		// GenericIO.writelnString("Waiting for student to pay the bill");
 		// Sleep while waiting for the student to honor the bill
 		while (!billHonored) {
 			try {
@@ -146,10 +238,8 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-
-		// reset orderDescribed flag
+		// reset billHonored flag
 		setBillHonored(false);
-
 	}
 
 	/**
@@ -160,7 +250,6 @@ public class Table {
 	 */
 
 	public synchronized boolean haveAllPortionsBeenServed() {
-		// GenericIO.writelnString("Portions delivered: " + portionsDelivered);
 		return portionsDelivered == SimulPar.N;
 	}
 
@@ -175,11 +264,9 @@ public class Table {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.TKODR);
 		repos.setWaiterState(WaiterStates.TKODR);
-
 		// setting gotThePad flag and wake up the student
 		setGotThePad(true);
 		notifyAll();
-
 		// Sleep while waiting for the student to describe the order
 		while (!orderDescribed) {
 			try {
@@ -187,7 +274,6 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-
 		// reset orderDescribed flag
 		setOrderDescribed(false);
 	}
@@ -202,7 +288,6 @@ public class Table {
 
 	private synchronized void setPortionDelivered(boolean b) {
 		portionDelivered = b;
-
 	}
 
 	/**
@@ -214,7 +299,6 @@ public class Table {
 	 */
 	private synchronized void setAllFinishedEating(boolean b) {
 		allFinishedEating = b;
-
 	}
 
 	/**
@@ -226,7 +310,6 @@ public class Table {
 	 */
 	private synchronized void setGotThePad(boolean b) {
 		gotThePad = b;
-
 	}
 
 	/**
@@ -238,7 +321,6 @@ public class Table {
 	 */
 	public synchronized void setOrderDescribed(boolean described) {
 		orderDescribed = described;
-
 	}
 
 	/**
@@ -250,7 +332,6 @@ public class Table {
 	 */
 	public synchronized void setBillHonored(boolean honored) {
 		billHonored = honored;
-
 	}
 
 	/**
@@ -263,7 +344,6 @@ public class Table {
 
 	public synchronized void setClientSaluted(boolean saluted) {
 		clientSaluted = saluted;
-
 	}
 
 	/**
@@ -290,23 +370,20 @@ public class Table {
 		students[studentID] = ((Student) Thread.currentThread());
 		((Student) Thread.currentThread()).setStudentState(StudentStates.TKSTT);
 		repos.setStudentState(studentID, StudentStates.TKSTT);
-
 		// adding student to the sit order FIFO
 		try {
 			sitOrder.write(studentID);
 		} catch (MemException e1) {
 			e1.printStackTrace();
 		}
-
+		// if first = -1 the current student is the first to enter the restaurant
 		if (first == -1) {
 			first = studentID;
 		}
-
+		// setting the table seat of the student
 		((Student) Thread.currentThread()).setSeat(nStudents);
 		repos.setStudentSeat(studentID, nStudents);
 		nStudents++;
-		// GenericIO.writelnString("Student " + studentID + " is waiting for the waiter
-		// to salute him");
 		// Sleep while waiting for the waiter to salute the student
 		while (!clientSaluted) {
 			try {
@@ -314,10 +391,8 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-
 		// reset clientSaluted flag
 		setClientSaluted(false);
-
 	}
 
 	/**
@@ -332,11 +407,9 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.SELCS);
 		repos.setStudentState(studentID, StudentStates.SELCS);
-
 		// set menuRead flag and waking up the waiter
 		menuRead = true;
 		notifyAll();
-
 	}
 
 	/**
@@ -347,12 +420,8 @@ public class Table {
 	 * 
 	 */
 	public synchronized boolean firstToEnter() {
-		int studentID;
-		// set state of student
-		studentID = ((Student) Thread.currentThread()).getStudentID();
-
+		int studentID = ((Student) Thread.currentThread()).getStudentID();
 		return studentID == first;
-
 	}
 
 	/**
@@ -361,12 +430,11 @@ public class Table {
 	 * It is called by a student to inform the companion about its order
 	 */
 	public synchronized void informCompanions() {
-
 		nOrders++;
+		// set informed flag
 		setInformed(true);
 		// waking up the student that takes the order
 		notifyAll();
-
 	}
 
 	/**
@@ -377,25 +445,23 @@ public class Table {
 	 */
 
 	public synchronized void organizeOrder() {
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.OGODR);
 		repos.setStudentState(studentID, StudentStates.OGODR);
-
 		// for each student wait minus himself
 		while (nOrders < SimulPar.S - 1) {
-			// Sleep while waiting for all of the students to describes their orders
+			// Sleep while waiting for a student to inform him of its request
 			while (!informed) {
 				try {
 					wait();
 				} catch (Exception e) {
 				}
 			}
+			// reset informed flag
 			setInformed(false);
 		}
-
 	}
 
 	/**
@@ -406,7 +472,6 @@ public class Table {
 	 */
 
 	public synchronized void describeOrder() {
-
 		// Sleep while waiting for the waiter to get the pad
 		while (!gotThePad) {
 			try {
@@ -414,18 +479,15 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
-
-		// reset gotThePad flag and set orderDescribed flag and waking up the waiter
+		// reset gotThePad flag, set orderDescribed flag and waking up the waiter
 		setGotThePad(false);
 		setOrderDescribed(true);
 		notifyAll();
-
 	}
 
 	/**
@@ -436,34 +498,21 @@ public class Table {
 	 */
 
 	public synchronized void chat() {
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
-
-		// GenericIO.writelnString("Student " + studentID + " is here");
-
 		// Sleep while waiting for a portion to be served or everybody has finished
 		// eating
-
 		while (!portionDelivered && !noMoreCourses) {
 			try {
 				wait();
-				// GenericIO.writelnString("\nStudent " + studentID + " was waken up,
-				// deliveredPortions: " + portionsDelivered + "\n");
 			} catch (Exception e) {
 			}
 		}
-
-		// reset orderDescribed flag
+		// reset portionDelivered flag
 		setPortionDelivered(false);
-
-		// allFinishedEating = false;
-
-		// GenericIO.writelnString("\nStudent " + studentID + " is leaving\n");
-
 	}
 
 	/**
@@ -474,16 +523,14 @@ public class Table {
 	 */
 
 	public synchronized void enjoyMeal() {
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.EJYML);
 		repos.setStudentState(studentID, StudentStates.EJYML);
-
+		// set portion accepted flag
 		portionAccepted = true;
 		notifyAll();
-
 		try {
 			Thread.sleep((long) (1 + 40 * Math.random()));
 		} catch (InterruptedException e) {
@@ -500,13 +547,11 @@ public class Table {
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
+		// increase number of portions eaten
 		eat++;
-
 		if (eat == SimulPar.S) {
-			// GenericIO.writelnString("Student " + studentID + " was the last to eat");
 			coursesDelivered++;
 			repos.setCoursesDelivered(coursesDelivered);
-
 			if (coursesDelivered == SimulPar.M) {
 				setAllFinishedEating(true);
 				noMoreCourses = true;
@@ -517,7 +562,6 @@ public class Table {
 			portionsDelivered = 0;
 			setAllFinishedEating(true);
 			notifyAll();
-
 			return true;
 		}
 		setAllFinishedEating(false);
@@ -533,9 +577,8 @@ public class Table {
 	 */
 
 	public synchronized boolean lastToEnterRestaurant() {
-		int studentID;
 		// set state of student
-		studentID = ((Student) Thread.currentThread()).getStudentID();
+		int studentID = ((Student) Thread.currentThread()).getStudentID();
 		return studentID == sitOrder.getLast();
 	}
 
@@ -547,27 +590,23 @@ public class Table {
 	 */
 
 	public synchronized void honorTheBill() {
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.PYTBL);
 		repos.setStudentState(studentID, StudentStates.PYTBL);
-
-		// GenericIO.writelnString("Student " + studentID + " is waiting for the waiter
-		// to present the bill");
-
+		// sleep while waiting for the waiter to present the bill
 		while (!billPresented) {
 			try {
 				wait();
 			} catch (Exception e) {
 			}
 		}
+		// reset billPresented flag
 		billPresented = false;
-		// set orderDescribed flag and wake up waiter
+		// set billHonored flag and wake up waiter
 		setBillHonored(true);
 		notifyAll();
-
 	}
 
 	/**
@@ -582,7 +621,6 @@ public class Table {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGHOM);
 		repos.setStudentState(studentID, StudentStates.GGHOM);
-
 	}
 
 	/**
@@ -593,25 +631,17 @@ public class Table {
 	 * 
 	 */
 	public synchronized void waitForEveryoneToFinish() {
-
 		int studentID;
 		// set state of student
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
 		repos.setStudentState(studentID, StudentStates.CHTWC);
-
+		// sleep while waiting or everyone to finish eating the current course
 		while (!allFinishedEating) {
 			try {
 				wait();
-				// GenericIO.writelnString("Student " + studentID + " was awaken while waiting
-				// for everyone to finish eating");
 			} catch (Exception e) {
 			}
 		}
-
-		// GenericIO.writelnString("Student " + studentID + " finished waiting and now
-		// will chat");
-
 	}
-
 }

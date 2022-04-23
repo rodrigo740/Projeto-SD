@@ -29,6 +29,9 @@ public class Bar {
 	 */
 	private final GeneralRepo repos;
 
+	/**
+	 * Char that represents the next operation of the waiter
+	 */
 	private char oper;
 	/**
 	 * Boolean flag that indicates if the payment was received
