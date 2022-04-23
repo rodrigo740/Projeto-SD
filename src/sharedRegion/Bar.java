@@ -53,7 +53,14 @@ public class Bar {
 		this.repos = repos;
 	}
 
-	public synchronized char lookArround() {
+	/**
+	 * Operation look around
+	 *
+	 * It is called by a waiter to look around
+	 * 
+	 */
+
+	public synchronized char lookAround() {
 		// GenericIO.writelnString("saluted: " + nSaluted);
 
 		// GenericIO.writelnString("Is looking around");
@@ -135,59 +142,137 @@ public class Bar {
 
 	}
 
+	/**
+	 * Set actionNeeded flag
+	 *
+	 * @param action
+	 */
+
 	public synchronized void setActionNeeded(boolean action) {
 		actionNeeded = action;
 	}
 
+	/**
+	 * Set oper flag
+	 *
+	 * @param op
+	 */
 	public synchronized void setOper(char op) {
 		oper = op;
 	}
 
+	/**
+	 * Getter has called waiter
+	 *
+	 * Method that returns hasCalledWaiter flag
+	 * 
+	 */
 	public synchronized boolean getHasCalledWaiter() {
 		return hasCalledWaiter;
 	}
 
+	/**
+	 * Set hasCalledWaiter flag
+	 *
+	 * @param hasCalledWaiter
+	 */
 	public synchronized void setHasCalledWaiter(boolean hasCalledWaiter) {
 		this.hasCalledWaiter = hasCalledWaiter;
 	}
 
+	/**
+	 * Getter wants to pay
+	 *
+	 * Method that returns wantsToPay flag
+	 * 
+	 */
 	public synchronized boolean getWantsToPay() {
 		return wantsToPay;
 	}
 
+	/**
+	 * Set wantsToPay flag
+	 *
+	 * @param wantsToPay
+	 */
 	public synchronized void setWantsToPay(boolean wantsToPay) {
 		this.wantsToPay = wantsToPay;
 	}
 
+	/**
+	 * Getter described order
+	 *
+	 * Method that returns describedOrder flag
+	 * 
+	 */
 	public synchronized boolean getDescribedOrder() {
 		return describedOrder;
 	}
 
+	/**
+	 * Set describedOrder flag
+	 *
+	 * @param describedOrder
+	 */
 	public synchronized void setDescribedOrder(boolean describedOrder) {
 		this.describedOrder = describedOrder;
 	}
 
+	/**
+	 * Getter signal waiter
+	 *
+	 * Method that returns signalWaiter flag
+	 * 
+	 */
 	public synchronized boolean getSignalWaiter() {
 		return signalWaiter;
 	}
 
+	/**
+	 * Set signalWaiter flag
+	 *
+	 * @param signalWaiter
+	 */
 	public synchronized void setSignalWaiter(boolean signalWaiter) {
 		this.signalWaiter = signalWaiter;
 	}
 
+	/**
+	 * Getter bill honored
+	 *
+	 * Method that returns billHonored flag
+	 * 
+	 */
 	public synchronized boolean getBillHonored() {
 		return billHonored;
 	}
 
+	/**
+	 * Set billHonored flag
+	 *
+	 * @param billHonored
+	 */
 	public synchronized void setBillHonored(boolean billHonored) {
 		this.billHonored = billHonored;
 	}
 
+	/**
+	 * Operation say goodbye
+	 *
+	 * It is called by a waiter to say goodbye to the student
+	 * 
+	 */
 	public synchronized void sayGoodbye() {
 		nSaidGoodbye++;
 		// GenericIO.writelnString("Goodbye nº: " + nLeft);
 	}
 
+	/**
+	 * Operation return to the bar
+	 *
+	 * It is called by a waiter to return to the bar
+	 * 
+	 */
 	public synchronized void returnToTheBar() {
 
 		// set state of waiter
@@ -196,6 +281,12 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation return to the bar after salute
+	 *
+	 * It is called by a waiter to return to the bar after saluting the student
+	 * 
+	 */
 	public synchronized void returnToTheBarAfterSalute() {
 
 		nSaluted++;
@@ -206,6 +297,12 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation return to the bar after taking the order
+	 *
+	 * It is called by a waiter to return to the bar after taking the order
+	 * 
+	 */
 	public synchronized void returnToTheBarAfterTakingTheOrder() {
 
 		studentCalled = false;
@@ -215,6 +312,14 @@ public class Bar {
 		repos.setWaiterState(WaiterStates.APPST);
 
 	}
+
+	/**
+	 * Operation return to the bar after portions delivered
+	 *
+	 * It is called by a waiter to the bar after all portions of a course have been
+	 * delivered
+	 * 
+	 */
 
 	public synchronized void returnToTheBarAfterPortionsDelivered() {
 
@@ -226,12 +331,26 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation prepare the bill
+	 *
+	 * It is called by a waiter to prepare the bill
+	 * 
+	 */
 	public synchronized void prepareBill() {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRCBL);
 		repos.setWaiterState(WaiterStates.PRCBL);
 
 	}
+
+	/**
+	 * VER ESTA ----------------------- se é chamada ou nao Operation can bring next
+	 * course
+	 *
+	 * It is called by a student to
+	 * 
+	 */
 
 	public synchronized void canBringNextCourse() {
 		// Sleep while waiting for the student to signal it needs the next course
@@ -247,12 +366,25 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation «get the pad
+	 *
+	 * It is called by a waiter to get the pad
+	 * 
+	 */
 	public synchronized void getThePad() {
 
 		// wake up the student
 		notifyAll();
 
 	}
+
+	/**
+	 * Operation call the waiter
+	 *
+	 * It is called by a student to call the waiter to describe the order
+	 * 
+	 */
 
 	public synchronized void callTheWaiter() {
 		bringNextCourse = true;
@@ -264,6 +396,12 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation should have arrived earlier
+	 *
+	 * It is called by a student to warn the waiter that it is ready to pay the bill
+	 * 
+	 */
 	public synchronized void shouldHaveArrivedEarlier() {
 
 		readyToPay = true;
@@ -275,6 +413,13 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation enter
+	 *
+	 * It is called by a student to enter the restaurant
+	 * 
+	 */
+
 	public synchronized void enter() {
 		nEntered++;
 		// set action flag and oper and finally wake up the waiter
@@ -282,6 +427,14 @@ public class Bar {
 		setOper('c');
 		notifyAll();
 	}
+
+	/**
+	 * Operation alert waiter
+	 *
+	 * It is called by a chef to warn the waiter that a portions is ready to be
+	 * delivered
+	 * 
+	 */
 
 	public synchronized void alertWaiter() {
 		waiterAlerted = true;
@@ -292,6 +445,13 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation signal waiter
+	 *
+	 * It is called by a student to warn the waiter that it can start delivering the
+	 * portions of the next course
+	 * 
+	 */
 	public synchronized void signalWaiter() {
 		bringNextCourse = true;
 		// set action flag and oper and finally wake up the waiter
@@ -301,6 +461,12 @@ public class Bar {
 
 	}
 
+	/**
+	 * Operation go home
+	 *
+	 * It is called by a student to warn the waiter that its going home
+	 * 
+	 */
 	public synchronized void goHome() {
 		int studentID;
 		// set state of student
@@ -320,6 +486,13 @@ public class Bar {
 		notifyAll();
 
 	}
+
+	/**
+	 * Operation received payment
+	 *
+	 * It is called by a waiter after the payment has been received
+	 * 
+	 */
 
 	public synchronized void receivedPayment() {
 

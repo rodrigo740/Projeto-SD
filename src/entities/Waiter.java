@@ -46,7 +46,7 @@ public class Waiter extends Thread {
 		boolean end = false;
 
 		while (!end) {
-			oper = bar.lookArround();
+			oper = bar.lookAround();
 			switch (oper) {
 			case 'c':
 				GenericIO.writelnString("Going to salute a client");
