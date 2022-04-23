@@ -6,18 +6,54 @@ import entities.Waiter;
 import entities.WaiterStates;
 import main.SimulPar;
 
-public class Kitchen {
+/**
+ * Kitchen.
+ *
+ * It is responsible for the the synchronization of the chef and waiter during
+ * the order processing and is implemented as an implicit monitor.
+ * 
+ * There is three internal synchronization points: two blocking points for the
+ * chef, where he waits for an order to arrive and to wait for the waiter to
+ * collect a portion; And a single blocking point for the waiter, where he waits
+ * for a portion to be collected
+ */
 
+public class Kitchen {
+	/**
+	 * Reference to the Chef.
+	 */
 	private final Chef chef;
+	/**
+	 * Reference to the General Information Repository.
+	 */
 	private final GeneralRepo repos;
 
+	/**
+	 * Boolean flag that indicates if the order has arrived
+	 */
 	private boolean orderArrived;
+	/**
+	 * Boolean flag that indicates if the portion was collected
+	 */
 	private boolean portionCollected;
+	/**
+	 * Boolean flag that indicates if the portion is ready
+	 */
 	private boolean portionReady;
-
+	/**
+	 * number of the delivered courses
+	 */
 	private int deliveredCourses;
+	/**
+	 * number of the delivered portions
+	 */
 	private int deliveredPortions;
 
+	/**
+	 * Kitchen instantiation
+	 * 
+	 * @param repos reference to the General Information Repository
+	 */
 	public Kitchen(GeneralRepo repos) {
 		this.chef = null;
 		this.repos = repos;
@@ -266,6 +302,13 @@ public class Kitchen {
 
 	}
 
+	/**
+	 * Operation alert waiter
+	 *
+	 * It is called by a chef to warn the waiter that a portion is ready to be
+	 * collected
+	 *
+	 */
 	public synchronized void alertWaiter() {
 		setPortionReady(true);
 		notifyAll();
