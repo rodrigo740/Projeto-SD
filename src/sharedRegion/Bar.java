@@ -8,37 +8,100 @@ import entities.WaiterStates;
 import genclass.GenericIO;
 import main.SimulPar;
 
+//falta ver os comentarios das variaveis estao bem
+/**
+ * Bar.
+ *
+ * It is responsible for the the synchronization of the waiter, student and chef
+ * during the order processing and is implemented as an implicit monitor.
+ * 
+ * There is two internal synchronization points: two blocking points for the
+ * waiter, where he waits for something to happen and waits for the student to
+ * signal that he can bring the next course.
+ */
 public class Bar {
-
+	/**
+	 * Reference to the waiter.
+	 */
 	private final Waiter waiter;
+	/**
+	 * Reference to the General Information Repository.
+	 */
 	private final GeneralRepo repos;
 
 	private char oper;
-
+	/**
+	 * Boolean flag that indicates if the payment was received
+	 */
 	private boolean paymentReceived;
+	/**
+	 * Boolean flag that indicates if wants pay
+	 */
 	private boolean wantsToPay;
+	/**
+	 * Boolean flag that indicates if described the order
+	 */
 	private boolean describedOrder;
+	/**
+	 * Boolean flag that indicates if signal to waiter
+	 */
 	private boolean signalWaiter;
+	/**
+	 * Boolean flag that indicates if bill honored
+	 */
 	private boolean billHonored;
+	/**
+	 * Boolean flag that indicates if called the waiter
+	 */
 	private boolean hasCalledWaiter;
 
+	/**
+	 * Boolean flag that indicates if need action
+	 */
 	private boolean actionNeeded;
 
+	/**
+	 * Boolean flag that indicates if bring next course
+	 */
 	private boolean bringNextCourse;
 
+	/**
+	 * Boolean flag that indicates if ready to pay
+	 */
 	private boolean readyToPay;
-
+	/**
+	 * Boolean flag that indicates if student called the waiter
+	 */
 	private boolean studentCalled;
 
+	/**
+	 * Boolean flag that indicates if waiter was alerted
+	 */
 	private boolean waiterAlerted;
-
+	/**
+	 * number of the students leave the restaurant
+	 */
 	private int nLeft;
+	/**
+	 * number of the students entered in the restaurant
+	 */
 	private int nEntered;
+	/**
+	 * number of the students that waiter saluted
+	 */
 	private int nSaluted;
+	/**
+	 * number of the students that waiter said goodbye
+	 */
 	private int nSaidGoodbye;
 
 	private MemFIFO<Integer> enterOrder;
 
+	/**
+	 * Bar instantiation
+	 * 
+	 * @param repos reference to the General Information Repository
+	 */
 	public Bar(GeneralRepo repos) {
 
 		try {
@@ -341,28 +404,6 @@ public class Bar {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRCBL);
 		repos.setWaiterState(WaiterStates.PRCBL);
-
-	}
-
-	/**
-	 * VER ESTA ----------------------- se é chamada ou nao Operation can bring next
-	 * course
-	 *
-	 * It is called by a student to
-	 * 
-	 */
-
-	public synchronized void canBringNextCourse() {
-		// Sleep while waiting for the student to signal it needs the next course
-		while (!bringNextCourse) {
-			try {
-				wait();
-			} catch (Exception e) {
-			}
-		}
-
-		// reset bringNextCourse flag
-		bringNextCourse = false;
 
 	}
 
