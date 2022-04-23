@@ -99,15 +99,12 @@ public class Kitchen {
 	 */
 
 	public synchronized void handTheNoteToTheChef() {
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PCODR);
 		repos.setWaiterState(WaiterStates.PCODR);
-
 		// set orderArrived flag and wake chef
 		setOrderArrived(true);
 		notifyAll();
-
 	}
 
 	/**
@@ -119,11 +116,9 @@ public class Kitchen {
 	 */
 
 	public synchronized void watchTheNews() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.WAFOR);
 		repos.setChefState(ChefStates.WAFOR);
-
 		// Sleep while waiting for order to arrive
 		while (!orderArrived) {
 			try {
@@ -131,7 +126,6 @@ public class Kitchen {
 			} catch (Exception e) {
 			}
 		}
-
 		// order has arrived reseting flag
 		setOrderArrived(false);
 	}
@@ -144,7 +138,6 @@ public class Kitchen {
 	 */
 
 	public synchronized void startPreparations() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.PRPCS);
 		repos.setChefState(ChefStates.PRPCS);
@@ -158,11 +151,9 @@ public class Kitchen {
 	 */
 
 	public synchronized void continuePreparation() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.PRPCS);
 		repos.setChefState(ChefStates.PRPCS);
-
 		// reset delivered portions
 		deliveredPortions = 0;
 	}
@@ -175,14 +166,11 @@ public class Kitchen {
 	 */
 
 	public synchronized void proceedToPresentation() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.DSHPT);
 		repos.setChefState(ChefStates.DSHPT);
-
 		// set portionReady flag
 		setPortionReady(true);
-
 	}
 
 	/**
@@ -193,7 +181,6 @@ public class Kitchen {
 	 */
 
 	public synchronized boolean allPortionsDelived() {
-
 		return SimulPar.N == deliveredPortions;
 	}
 
@@ -205,14 +192,12 @@ public class Kitchen {
 	 */
 
 	public synchronized void deliverPortion() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.DLVPT);
 		repos.setChefState(ChefStates.DLVPT);
-
+		// set portionReady flag
 		setPortionReady(true);
 		notifyAll();
-
 		// Sleep while waiting for order to arrive
 		while (!portionCollected) {
 			try {
@@ -220,10 +205,8 @@ public class Kitchen {
 			} catch (Exception e) {
 			}
 		}
-
 		// increment delivered portions
 		deliveredPortions++;
-
 		// reseting portionCollected flag
 		setPortionCollected(false);
 	}
@@ -236,13 +219,9 @@ public class Kitchen {
 	 */
 
 	public synchronized void collectPortion() {
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.WTFPT);
 		repos.setWaiterState(WaiterStates.WTFPT);
-
-		// GenericIO.writelnString("\nwaiter is waiting for another Portion\n");
-
 		// Sleep while waiting for a portion to be ready to be ready
 		while (!portionReady) {
 			try {
@@ -250,9 +229,8 @@ public class Kitchen {
 			} catch (Exception e) {
 			}
 		}
-
+		// reset portionReady flag
 		setPortionReady(false);
-
 		// Set portionCollected flag and wake the chef
 		setPortionCollected(true);
 		notifyAll();
@@ -266,11 +244,9 @@ public class Kitchen {
 	 */
 
 	public synchronized void haveNextPortionReady() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.DSHPT);
 		repos.setChefState(ChefStates.DSHPT);
-
 	}
 
 	/**
@@ -284,7 +260,6 @@ public class Kitchen {
 		// increment delivered courses
 		deliveredCourses++;
 		return SimulPar.M == deliveredCourses;
-
 	}
 
 	/**
@@ -295,11 +270,9 @@ public class Kitchen {
 	 */
 
 	public synchronized void cleanUp() {
-
 		// set state of chef
 		((Chef) Thread.currentThread()).setChefState(ChefStates.CLSSV);
 		repos.setChefState(ChefStates.CLSSV);
-
 	}
 
 	/**
@@ -310,6 +283,7 @@ public class Kitchen {
 	 *
 	 */
 	public synchronized void alertWaiter() {
+		// set portionReady flag and waking up the waiter
 		setPortionReady(true);
 		notifyAll();
 	}

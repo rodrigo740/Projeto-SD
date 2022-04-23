@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import main.SimulPar;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
@@ -118,58 +117,42 @@ public class Student extends Thread {
 	 */
 	@Override
 	public void run() {
-
+		// Transition to 'GGTRT'
 		walk();
-
 		bar.enter();
-		GenericIO.writelnString("Student " + studentID + " has entered the restaurant");
-
+		// Transition to 'TKSTT'
 		tbl.takeASeat();
-		GenericIO.writelnString("Student " + studentID + " has took a seat");
-
+		// Transition to 'SELCS'
 		tbl.selectingCourse();
-		GenericIO.writelnString("Student " + studentID + " has selected a course");
-
 		if (!tbl.firstToEnter()) {
 			tbl.informCompanions();
-			GenericIO.writelnString("Student " + studentID + " has informed the companion");
 		} else {
-			GenericIO.writelnString("Student " + studentID + " will organize the order");
+			// Transition to 'OGODR'
 			tbl.organizeOrder();
-			GenericIO.writelnString("Student " + studentID + " is going to call the waiter");
 			bar.callTheWaiter();
-			GenericIO.writelnString("Student " + studentID + " waiter has been called");
 			tbl.describeOrder();
-			GenericIO.writelnString("Student " + studentID + " has described the order");
-
 		}
 		for (int i = 0; i < SimulPar.M; i++) {
+			// Transition to 'CHTWC'
 			tbl.chat();
-			GenericIO.writelnString("Student " + studentID + " received a portion");
+			// Transition to 'EJYML'
 			tbl.enjoyMeal();
-			GenericIO.writelnString("Student " + studentID + " has eaten");
 			if (tbl.lastToEat()) {
-				GenericIO.writelnString("Student " + studentID + " was the last ot eat");
 				bar.signalWaiter();
 			} else {
-				GenericIO.writelnString(
-						"Student " + studentID + " wasn't the last to eat, waiting for other students.....");
+				// Transition to 'CHTWC'
 				tbl.waitForEveryoneToFinish();
 			}
-			GenericIO.writelnString("Student " + studentID + " has stopped chatting");
 		}
-
-		GenericIO.writelnString("Student " + studentID + " has no more courses");
-
+		// Transition to 'CHTWC'
 		tbl.chat();
 		if (tbl.lastToEnterRestaurant()) {
-			GenericIO.writelnString("Student " + studentID + " must honor the bill");
 			bar.shouldHaveArrivedEarlier();
+			// Transition to 'PYTBL'
 			tbl.honorTheBill();
-			GenericIO.writelnString("Student " + studentID + " has honored the bill");
 		}
+		// Transition to 'GGHOM'
 		bar.goHome();
-
 	}
 
 	/**
@@ -180,10 +163,7 @@ public class Student extends Thread {
 	 */
 
 	public void walk() {
-
 		long v = (long) (1 + 40 * Math.random());
-		GenericIO.writelnString("Student " + studentID + " has to walk for " + v + "ms");
-
 		try {
 			Thread.sleep(v);
 		} catch (InterruptedException e) {

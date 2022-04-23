@@ -479,11 +479,6 @@ public class Table {
 			} catch (Exception e) {
 			}
 		}
-		int studentID;
-		// set state of student
-		studentID = ((Student) Thread.currentThread()).getStudentID();
-		((Student) Thread.currentThread()).setStudentState(StudentStates.CHTWC);
-		repos.setStudentState(studentID, StudentStates.CHTWC);
 		// reset gotThePad flag, set orderDescribed flag and waking up the waiter
 		setGotThePad(false);
 		setOrderDescribed(true);

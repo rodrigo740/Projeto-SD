@@ -86,9 +86,13 @@ public class MemFIFO<R> extends MemObject<R> {
 		return val;
 	}
 
-	public boolean isFull() {
-		return inPnt == 0;
-	}
+	/**
+	 * FIFO retrieval. A parametric object is read from it. If the FIFO is empty, an
+	 * error is reported.
+	 *
+	 * @return last parametric object that was written
+	 * @throws MemException when the FIFO is empty
+	 */
 
 	public R getLast() {
 		return mem[mem.length - 1];

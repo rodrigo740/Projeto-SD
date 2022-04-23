@@ -106,7 +106,6 @@ public class Bar {
 	 * @param repos reference to the General Information Repository
 	 */
 	public Bar(GeneralRepo repos) {
-
 		try {
 			enterOrder = new MemFIFO<>(new Integer[SimulPar.S]);
 		} catch (Exception e) {
@@ -114,7 +113,6 @@ public class Bar {
 			enterOrder = null;
 			System.exit(1);
 		}
-
 		this.waiter = null;
 		this.repos = repos;
 	}
@@ -127,52 +125,51 @@ public class Bar {
 	 */
 
 	public synchronized char lookAround() {
-		// GenericIO.writelnString("saluted: " + nSaluted);
-
-		// GenericIO.writelnString("Is looking around");
-
+		// if everyone left end
 		if (nLeft == SimulPar.S) {
 			setOper('e');
 			return oper;
 		}
-
+		// if payment received while on other task wake up
 		if (paymentReceived) {
 			notifyAll();
 		}
-
+		// if someone left while on other task, say goodbye
 		if (nLeft != nSaidGoodbye) {
 			setActionNeeded(true);
 			setOper('g');
 		} else {
 			if (nLeft != 0) {
-
-				// GenericIO.writelnString("assssssasaaaaaaaaaaaaaaaa");
 				setActionNeeded(false);
 			}
 		}
-
+		// if someone entered while on other task, salute him
 		if (nSaluted != nEntered) {
 			setOper('c');
 			return oper;
 		} else {
 			setActionNeeded(false);
 		}
-
+		// if ready to pay was set while on other task, prepare operation 'b'
 		if (readyToPay) {
 			setOper('b');
 			return oper;
 		}
-
+		// if a student called while the waiter was on other task, prepare
+		// operation 'o'
 		if (studentCalled) {
 			setOper('o');
 			return oper;
 		}
-
+		// if the chef called while the waiter was on other task, prepare
+		// operation 'p'
 		if (waiterAlerted) {
 			setOper('p');
 			return oper;
 		}
-
+		// if a student said that the next course can be delivered while the waiter was
+		// on other task, prepare
+		// operation 'p'
 		if (bringNextCourse) {
 			setOper('p');
 			setActionNeeded(true);
@@ -180,14 +177,11 @@ public class Bar {
 
 		// Sleep while waiting for something to happen
 		while (!actionNeeded) {
-
 			try {
 				wait();
 			} catch (Exception e) {
 			}
-			// GenericIO.writelnString("Im hereeeeeeeeeeeee");
 		}
-
 		if (oper == 'p') {
 			// Sleep while waiting for the student to signal it needs the next course
 			while (!bringNextCourse) {
@@ -196,14 +190,11 @@ public class Bar {
 				} catch (Exception e) {
 				}
 			}
-
 			// reset bringNextCourse flag
 			bringNextCourse = false;
 		}
-
 		// reseting actionNeeded flag
 		setActionNeeded(false);
-		// GenericIO.writelnString("Waiter action needed: " + oper);
 		return oper;
 
 	}
@@ -340,7 +331,6 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void returnToTheBar() {
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
@@ -354,9 +344,7 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void returnToTheBarAfterSalute() {
-
 		nSaluted++;
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
@@ -370,9 +358,8 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void returnToTheBarAfterTakingTheOrder() {
-
+		// reset student called flag
 		studentCalled = false;
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
@@ -388,13 +375,10 @@ public class Bar {
 	 */
 
 	public synchronized void returnToTheBarAfterPortionsDelivered() {
-
 		waiterAlerted = false;
-
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.APPST);
 		repos.setWaiterState(WaiterStates.APPST);
-
 	}
 
 	/**
@@ -407,7 +391,6 @@ public class Bar {
 		// set state of waiter
 		((Waiter) Thread.currentThread()).setWaiterState(WaiterStates.PRCBL);
 		repos.setWaiterState(WaiterStates.PRCBL);
-
 	}
 
 	/**
@@ -417,10 +400,8 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void getThePad() {
-
 		// wake up the student
 		notifyAll();
-
 	}
 
 	/**
@@ -431,13 +412,13 @@ public class Bar {
 	 */
 
 	public synchronized void callTheWaiter() {
+		// set bringNextCourse and studentCalled flag
 		bringNextCourse = true;
 		studentCalled = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('o');
 		notifyAll();
-
 	}
 
 	/**
@@ -447,14 +428,12 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void shouldHaveArrivedEarlier() {
-
+		// set ready to pay flag
 		readyToPay = true;
-
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('b');
 		notifyAll();
-
 	}
 
 	/**
@@ -465,6 +444,7 @@ public class Bar {
 	 */
 
 	public synchronized void enter() {
+		// increment number of students that entered the restaurant
 		nEntered++;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
@@ -481,12 +461,12 @@ public class Bar {
 	 */
 
 	public synchronized void alertWaiter() {
+		// set waiter alerted flag
 		waiterAlerted = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('p');
 		notifyAll();
-
 	}
 
 	/**
@@ -497,6 +477,7 @@ public class Bar {
 	 * 
 	 */
 	public synchronized void signalWaiter() {
+		// set bringNextCourse flag
 		bringNextCourse = true;
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
@@ -517,18 +498,12 @@ public class Bar {
 		studentID = ((Student) Thread.currentThread()).getStudentID();
 		((Student) Thread.currentThread()).setStudentState(StudentStates.GGHOM);
 		repos.setStudentState(studentID, StudentStates.GGHOM);
-		/*
-		 * // Sleep while waiting payment not received while (!paymentReceived) { try {
-		 * wait(); } catch (Exception e) { } }
-		 */
-
+		// increment number of students that have left the restaurant
 		nLeft++;
-
 		// set action flag and oper and finally wake up the waiter
 		setActionNeeded(true);
 		setOper('g');
 		notifyAll();
-
 	}
 
 	/**
@@ -539,10 +514,9 @@ public class Bar {
 	 */
 
 	public synchronized void receivedPayment() {
-
+		// set paymentReceived flag and reseting readyToPay flag
 		paymentReceived = true;
 		readyToPay = false;
-
 	}
 
 }
