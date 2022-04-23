@@ -6,17 +6,49 @@ import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
 
+/**
+ * Student thread.
+ *
+ * Used to simulate the Student life cycle.
+ */
 public class Student extends Thread {
 
+	/**
+	 * Student identification
+	 */
 	private int studentID;
+	/**
+	 * Student state
+	 */
 	private int studentState;
 
+	/*
+	 * Number of the seat at the table
+	 */
 	private int seat;
 
+	/**
+	 * Reference to the Bar
+	 */
 	private final Bar bar;
+	/**
+	 * Reference to the Kitchen
+	 */
 	private final Kitchen kit;
+	/**
+	 * Reference to the Table
+	 */
 	private final Table tbl;
 
+	/**
+	 * Instantiation of a Student Thread
+	 * 
+	 * @param name      thread main
+	 * @param studentID ID of the student
+	 * @param bar       reference to the Bar
+	 * @param kit       reference to the Kitchen
+	 * @param tbl       reference to the Table
+	 */
 	public Student(String name, int studentID, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.studentID = studentID;
@@ -27,30 +59,63 @@ public class Student extends Thread {
 		this.seat = -1;
 	}
 
+	/**
+	 * Get Student ID
+	 * 
+	 * @return studentID
+	 */
 	public int getStudentID() {
 		return studentID;
 	}
 
+	/**
+	 * Set Student ID
+	 * 
+	 * @return studentID
+	 */
 	public void setStudentID(int studentID) {
 		this.studentID = studentID;
 	}
 
+	/**
+	 * Set number of the seat at the table
+	 * 
+	 * @param seat
+	 */
 	public void setSeat(int seat) {
 		this.seat = seat;
 	}
 
+	/**
+	 * Get Student state
+	 * 
+	 * @return studentState
+	 */
 	public int getStudentState() {
 		return studentState;
 	}
 
+	/**
+	 * Get number of the seat at the table
+	 * 
+	 * @return seat
+	 */
 	public int getSeat() {
 		return seat;
 	}
 
+	/**
+	 * Set Student state
+	 * 
+	 * @param studentState
+	 */
 	public void setStudentState(int studentState) {
 		this.studentState = studentState;
 	}
 
+	/**
+	 * Regulates the life cycle of the Student
+	 */
 	@Override
 	public void run() {
 
