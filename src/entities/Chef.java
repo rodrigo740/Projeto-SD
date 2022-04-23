@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -94,38 +93,32 @@ public class Chef extends Thread {
 	@Override
 	public void run() {
 		boolean firstCourse = true;
+		// Transition to 'WAFOR'
 		kit.watchTheNews();
-		GenericIO.writelnString("Got an order");
+		// Transition to 'PRPCS'
 		kit.startPreparations();
-
 		do {
 			if (!firstCourse) {
-				GenericIO.writelnString("Continue Preparations");
+				// Transition to 'PRPCS'
 				kit.continuePreparation();
 			} else {
 				firstCourse = false;
 			}
-
+			// Transition to 'DSHPT'
 			kit.proceedToPresentation();
-			GenericIO.writelnString("Waiter alerted");
 			bar.alertWaiter();
-			// kit.alertWaiter();
-			GenericIO.writelnString("Portion ready");
+			// Transition to 'DLVPT'
 			kit.deliverPortion();
-
 			while (!kit.allPortionsDelived()) {
-				GenericIO.writelnString("Preparing next portion");
+				// Transition to 'DSHPT'
 				kit.haveNextPortionReady();
-				GenericIO.writelnString("Next portion ready");
 				kit.alertWaiter();
-				GenericIO.writelnString("Waiter called to take next portion");
+				// Transition to 'DLVPT'
 				kit.deliverPortion();
-				GenericIO.writelnString("Portion delivered");
 			}
 		} while (!kit.orderBeenCompleted());
-
+		// Transition to 'CLSSV'
 		kit.cleanUp();
-		GenericIO.writelnString("Chef end");
 	}
 
 }

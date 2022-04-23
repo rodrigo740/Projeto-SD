@@ -321,7 +321,6 @@ public class Bar {
 	 */
 	public synchronized void sayGoodbye() {
 		nSaidGoodbye++;
-		// GenericIO.writelnString("Goodbye nº: " + nLeft);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package entities;
 
-import genclass.GenericIO;
 import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
@@ -105,57 +104,53 @@ public class Waiter extends Thread {
 
 	@Override
 	public void run() {
-
 		char oper;
 		boolean end = false;
-
 		while (!end) {
+			// Transition to 'APPST'
 			oper = bar.lookAround();
 			switch (oper) {
 			case 'c':
-				GenericIO.writelnString("Going to salute a client");
+				// Transition to 'PRSMN'
 				tbl.saluteTheClient();
-				GenericIO.writelnString("Returning to the bar after saluting");
+				// Transition to 'APPST'
 				bar.returnToTheBarAfterSalute();
 				break;
 			case 'o':
-				GenericIO.writelnString("Going to take the order");
+				// Transition to 'TKODR'
 				tbl.getThePad();
+				// Transition to 'PCODR'
 				kit.handTheNoteToTheChef();
-				GenericIO.writelnString("Returning to the bar after receiving an order and delivering it to the chef");
+				// Transition to 'APPST'
 				bar.returnToTheBarAfterTakingTheOrder();
 				break;
 			case 'p':
-
-				GenericIO.writelnString("Going to collect a portion");
 				while (!tbl.haveAllPortionsBeenServed()) {
-					GenericIO.writelnString("more portions need to be delivered!");
+					// Transition to 'WTFPT'
 					kit.collectPortion();
 					tbl.deliverPortion();
 				}
-				GenericIO.writelnString("All portions served, returning to the bar");
+				// Transition to 'APPST'
 				bar.returnToTheBarAfterPortionsDelivered();
 				break;
 			case 'b':
-				GenericIO.writelnString("Preparing the bill");
+				// Transition to 'PRCBL'
 				bar.prepareBill();
+				// Transition to 'RECPM'
 				tbl.presentBill();
 				bar.receivedPayment();
-				GenericIO.writelnString("Got the payment, returning to the bar");
+				// Transition to 'APPST'
 				bar.returnToTheBar();
 				break;
 			case 'g':
-				GenericIO.writelnString("Goodbye");
 				bar.sayGoodbye();
+				// Transition to 'APPST'
 				bar.returnToTheBar();
 				break;
 			case 'e':
 				end = true;
 				break;
 			}
-
 		}
-
 	}
-
 }
