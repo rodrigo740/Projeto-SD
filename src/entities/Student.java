@@ -54,7 +54,7 @@ public class Student extends Thread {
 	@Override
 	public void run() {
 
-		tbl.walk();
+		walk();
 
 		bar.enter();
 		GenericIO.writelnString("Student " + studentID + " has entered the restaurant");
@@ -104,6 +104,25 @@ public class Student extends Thread {
 			GenericIO.writelnString("Student " + studentID + " has honored the bill");
 		}
 		bar.goHome();
+
+	}
+
+	/**
+	 * Operation walk
+	 *
+	 * It is called by a student to wander before entering the restaurant
+	 * 
+	 */
+
+	public void walk() {
+
+		long v = (long) (1 + 40 * Math.random());
+		GenericIO.writelnString("Student " + studentID + " has to walk for " + v + "ms");
+
+		try {
+			Thread.sleep(v);
+		} catch (InterruptedException e) {
+		}
 
 	}
 

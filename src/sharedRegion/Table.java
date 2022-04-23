@@ -262,31 +262,6 @@ public class Table {
 	}
 
 	/**
-	 * Operation walk
-	 *
-	 * It is called by a student to going to wander before entering the restaurant
-	 * 
-	 */
-
-	public synchronized void walk() {
-		int studentID;
-		// set state of student
-		studentID = ((Student) Thread.currentThread()).getStudentID();
-		((Student) Thread.currentThread()).setStudentState(StudentStates.GGTRT);
-		repos.setStudentState(studentID, StudentStates.GGTRT);
-
-		long v = (long) (1 + 40 * Math.random());
-
-		for (int i = 0; i < v; i++) {
-		}
-
-		if (first == -1) {
-			first = studentID;
-		}
-
-	}
-
-	/**
 	 * Operation take a seat
 	 *
 	 * It is called by a student when it wants to take a seat at the table
@@ -305,6 +280,10 @@ public class Table {
 			sitOrder.write(studentID);
 		} catch (MemException e1) {
 			e1.printStackTrace();
+		}
+
+		if (first == -1) {
+			first = studentID;
 		}
 
 		((Student) Thread.currentThread()).setSeat(nStudents);
