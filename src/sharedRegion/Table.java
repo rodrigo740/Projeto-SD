@@ -9,6 +9,24 @@ import entities.WaiterStates;
 import genclass.GenericIO;
 import main.SimulPar;
 
+/**
+ * Table.
+ *
+ * It is responsible for the the synchronization of the Students and Waiter
+ * during the dinner process and is implemented as an implicit monitor.
+ * 
+ * There is ten internal synchronization points: four blocking point for the
+ * Waiter, where he waits for the students to read the menu, describe the order,
+ * accept a portion and honor the bill; and 6 blocking points for the Students,
+ * where a student waits for the waiter to come salute him, for the waiter to
+ * get the pad so he can describe the order, the student that has to organize
+ * the order waits for everyone to inform him of their order, waits for an new
+ * portion to arrive or for the end of the meal, when there are no more courses
+ * to be delivered, waits for everyone to finish eating the current course and
+ * student that has to honor the bill waits for the waiter to present the bill
+ * to him
+ */
+
 public class Table {
 
 	private int first;
@@ -27,9 +45,7 @@ public class Table {
 	private boolean portionDelivered;
 	private boolean allFinishedEating;
 	private boolean informed;
-
 	private boolean noMoreCourses;
-
 	private boolean portionAccepted;
 
 	private MemFIFO<Integer> sitOrder;
