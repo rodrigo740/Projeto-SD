@@ -5,15 +5,54 @@ import sharedRegion.Bar;
 import sharedRegion.Kitchen;
 import sharedRegion.Table;
 
+/**
+ * Waiter thread.
+ *
+ * Used to simulate the Waiter life cycle.
+ */
+
 public class Waiter extends Thread {
 
+	/**
+	 * Waiter identification.
+	 */
+
 	private int waiterID;
+
+	/**
+	 * Waiter state.
+	 */
+
 	private int waiterState;
 
+	/**
+	 * Reference to the Bar.
+	 */
+
 	private final Bar bar;
+
+	/**
+	 * Reference to the Kitchen.
+	 */
+
 	private final Kitchen kit;
+
+	/**
+	 * Reference to the Table.
+	 */
+
 	private final Table tbl;
 
+	/**
+	 * Instantiation of a Waiter thread.
+	 * 
+	 * @param name        thread name
+	 * @param waiterID    id of the waiter
+	 * @param waiterState state of the waiter
+	 * @param bar         reference to the bar
+	 * @param kit         reference to the kitchen
+	 * @param tbl         reference to the table
+	 */
 	public Waiter(String name, int waiterID, int waiterState, Bar bar, Kitchen kit, Table tbl) {
 		super(name);
 		this.waiterID = waiterID;
@@ -23,21 +62,46 @@ public class Waiter extends Thread {
 		this.tbl = tbl;
 	}
 
+	/**
+	 * Get waiter id
+	 * 
+	 * @return waiterID
+	 */
 	public int getWaiterID() {
 		return waiterID;
 	}
+
+	/**
+	 * Set waiter id
+	 * 
+	 */
 
 	public void setWaiterID(int waiterID) {
 		this.waiterID = waiterID;
 	}
 
+	/**
+	 * Get waiter state
+	 * 
+	 * @return waiterState
+	 */
+
 	public int getWaiterState() {
 		return waiterState;
 	}
 
+	/**
+	 * Set waiter state
+	 * 
+	 */
+
 	public void setWaiterState(int waiterState) {
 		this.waiterState = waiterState;
 	}
+
+	/**
+	 * Regulates the life cycle of the Waiter.
+	 */
 
 	@Override
 	public void run() {
@@ -67,7 +131,6 @@ public class Waiter extends Thread {
 				while (!tbl.haveAllPortionsBeenServed()) {
 					GenericIO.writelnString("more portions need to be delivered!");
 					kit.collectPortion();
-					// GenericIO.writelnString("Portions collected");
 					tbl.deliverPortion();
 				}
 				GenericIO.writelnString("All portions served, returning to the bar");
@@ -92,8 +155,6 @@ public class Waiter extends Thread {
 			}
 
 		}
-
-		// GenericIO.writelnString("Waiter end");
 
 	}
 

@@ -183,16 +183,6 @@ public class GeneralRepo {
 
 		}
 
-		// lineStatus += SimulPar.M + " " + SimulPar.N;
-
-		/*
-		 * for (int i = 0; i < SimulPar.S; i++) {
-		 * 
-		 * lineStatus += " " + studentsState[i];
-		 * 
-		 * }
-		 */
-
 		log.writelnString(lineStatus);
 		if (!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + logFileName + " failed!");
